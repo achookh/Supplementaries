@@ -317,7 +317,6 @@ public class SlingshotProjectileEntity extends ImprovedProjectileEntity implemen
     }
 
     //TODO: trails for bombs
-    @Override
     public void spawnTrailParticles(Vec3 currentPos, Vec3 newPos) {
         if (!this.isNoPhysics()) {
             double d = this.getDeltaMovement().length();
@@ -350,8 +349,8 @@ public class SlingshotProjectileEntity extends ImprovedProjectileEntity implemen
     }
 
     @Override
-    protected float getDeceleration() {
-        return this.isNoGravity() ? (float) (double) CommonConfigs.Tools.SLINGSHOT_DECELERATION.get() : super.getDeceleration();
+    protected float getInertia() {
+        return this.isNoGravity() ? (float) (double) CommonConfigs.Tools.SLINGSHOT_DECELERATION.get() : super.getInertia();
     }
 
     @Override
