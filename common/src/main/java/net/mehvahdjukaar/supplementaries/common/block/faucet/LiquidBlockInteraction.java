@@ -15,8 +15,9 @@ class LiquidBlockInteraction implements FaucetSource.Fluid {
     @Override
     public FluidOffer getProvidedFluid(Level level, BlockPos pos, Direction dir, FluidState source) {
         if (source.isEmpty() || !source.isSource() || source.getType() instanceof FiniteFluid) return null;
-        return FluidOffer.of(SoftFluidStack.fromFluid(source.getType(), SoftFluid.BUCKET_COUNT, null),
-                source.getType() != Fluids.WATER ? SoftFluid.BUCKET_COUNT : 1);
+        SoftFluidStack stack = SoftFluidStack.fromFluid(source.getType(), SoftFluid.BUCKET_COUNT, null);
+        if (stack.isEmpty()) return null;
+        return FluidOffer.of(stack, source.getType() != Fluids.WATER ? SoftFluid.BUCKET_COUNT : 1);
     }
 
     @Override

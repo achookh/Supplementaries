@@ -126,6 +126,12 @@ public abstract class AbstractMobContainerItem extends BlockItem {
         if (entity instanceof LivingEntity living) {
             if (living.isDeadOrDying()) return false;
 
+            String name = Utils.getID(entity.getType()).toString();
+            if (entity.getType().is(ModTags.CAPTURE_BLACKLIST)) return false;
+            if (CommonConfigs.Functional.CAGE_ALL_MOBS.get() || CapturedMobHandler.isCommandMob(name)) {
+                return true;
+            }
+
             if (entity instanceof TamableAnimal pet && (!pet.isTame() || !pet.isOwnedBy(player))) {
                 return false;
             }
@@ -135,12 +141,8 @@ public abstract class AbstractMobContainerItem extends BlockItem {
                 return false;
             }
         }
-        String name = Utils.getID(entity.getType()).toString();
 
-        if (entity.getType().is(ModTags.CAPTURE_BLACKLIST)) return false;
-        if (CommonConfigs.Functional.CAGE_ALL_MOBS.get() || CapturedMobHandler.isCommandMob(name)) {
-            return true;
-        }
+
         // If people want to catch these, so be it. All hardcoded checks are below the global config
         if (ForgeHelper.isMultipartEntity(entity)) return false;
         ICatchableMob cap = CapturedMobHandler.getCatchableMobCapOrDefault(entity);

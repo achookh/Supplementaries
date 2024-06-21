@@ -1,2 +1,3 @@
-- fixed crash with faucet when trying to transfer to fluid handlers
-- fixed safe missing loot table
+- fixed treasure map icons always being default icon when using vanilla markers
+- removed some unused textures
+- fixed an urn dupe
