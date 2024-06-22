@@ -1,3 +1,2 @@
-- fixed treasure map icons always being default icon when using vanilla markers
-- removed some unused textures
-- fixed an urn dupe
+- fixed a server crash
+- updated breezy compat

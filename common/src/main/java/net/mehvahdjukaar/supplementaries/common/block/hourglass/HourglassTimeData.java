@@ -11,21 +11,18 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BannerBlock;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 
-public class HourglassTimeData {
+public record HourglassTimeData(HolderSet<Item> dusts, int duration, int light, Optional<ResourceLocation> texture, int ordering) {
 
     public static final HourglassTimeData EMPTY = new HourglassTimeData(HolderSet.direct(), 0, 0, Optional.empty(), 99);
 
@@ -37,18 +34,19 @@ public class HourglassTimeData {
             StrOpt.of(ExtraCodecs.POSITIVE_INT, "ordering", 0).forGetter(p -> p.ordering)
     ).apply(instance, HourglassTimeData::new));
 
-    private final HolderSet<Item> dusts;
-    private final int duration;
-    private final int light;
-    private final Optional<ResourceLocation> texture;
-    private final int ordering;
+    public static final Codec<HourglassTimeData> NETWORK_CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            BuiltInRegistries.ITEM.byNameCodec().listOf().fieldOf("items").forGetter(p -> p.dusts.stream()
+                    .map(Holder::value)
+                    .toList()),
+            ExtraCodecs.POSITIVE_INT.fieldOf("duration").forGetter(p -> p.duration),
+            StrOpt.of(Codec.intRange(0, 15), "light_level", 0).forGetter(p -> p.light),
+            StrOpt.of(ResourceLocation.CODEC, "texture").forGetter(p -> p.texture),
+            StrOpt.of(ExtraCodecs.POSITIVE_INT, "ordering", 0).forGetter(p -> p.ordering)
+    ).apply(instance, HourglassTimeData::fromNetwork));
 
-    public HourglassTimeData(HolderSet<Item> owner, int duration, int light, Optional<ResourceLocation> texture, int priority) {
-        this.dusts = owner;
-        this.duration = duration;
-        this.light = light;
-        this.texture = texture;
-        this.ordering = priority;
+    private static HourglassTimeData fromNetwork(List<Item> items, Integer integer, Integer integer1, Optional<ResourceLocation> resourceLocation, Integer integer2) {
+        return new HourglassTimeData(HolderSet.direct( items.stream().map(BuiltInRegistries.ITEM::wrapAsHolder).toList()),
+                integer, integer1, resourceLocation, integer2);
     }
 
     public ResourceLocation computeTexture(ItemStack i, Level world) {
@@ -64,14 +62,6 @@ public class HourglassTimeData {
 
     public Stream<Holder<Item>> getItems() {
         return dusts.stream();
-    }
-
-    public int getLight() {
-        return light;
-    }
-
-    public int getOrdering() {
-        return ordering;
     }
 
     public boolean isEmpty() {
