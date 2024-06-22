@@ -44,7 +44,7 @@ public class HourglassTimesManager extends RegistryAccessJsonReloadListener {
                 Supplementaries.LOGGER.error("Failed to parse JSON object for hourglass data {}", key);
             }
         });
-        list.sort(Comparator.comparing(HourglassTimeData::getOrdering));
+        list.sort(Comparator.comparing(HourglassTimeData::ordering));
         list.forEach(HourglassTimesManager::addData);
     }
 

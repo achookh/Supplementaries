@@ -317,7 +317,10 @@ public class SlingshotProjectileEntity extends ImprovedProjectileEntity implemen
     }
 
     //TODO: trails for bombs
-    public void spawnTrailParticles(Vec3 currentPos, Vec3 newPos) {
+    @Override
+    public void spawnTrailParticles() {
+        Vec3 newPos = this.position();
+        Vec3 currentPos = new Vec3(xo,yo,zo);
         if (!this.isNoPhysics()) {
             double d = this.getDeltaMovement().length();
             if (this.tickCount > 1 && d * this.tickCount > 1.5) {

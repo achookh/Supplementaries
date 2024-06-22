@@ -4,7 +4,7 @@
       "type": "forge:not",
       "value": {
         "type": "forge:tag_empty",
-        "flag": "altimeter"
+        "tag": "supplementaries:altimeters"
       }
     },
     {

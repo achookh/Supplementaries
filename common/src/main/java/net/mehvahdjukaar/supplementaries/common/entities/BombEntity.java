@@ -181,7 +181,9 @@ public class BombEntity extends ImprovedProjectileEntity implements IExtraClient
     }
 
     @Override
-    public void spawnTrailParticles(Vec3 currentPos, Vec3 newPos) {
+    public void spawnTrailParticles() {
+        Vec3 newPos = this.position();
+        Vec3 currentPos = new Vec3(xo,yo,zo);
         if (this.active && this.tickCount>1) {
             double x = currentPos.x;
             double y = currentPos.y;
