@@ -43,6 +43,7 @@ import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import org.jetbrains.annotations.Nullable;
 import org.violetmoon.quark.content.tools.item.PathfindersQuillItem;
 import org.violetmoon.zeta.util.ItemNBTHelper;
+import vectorwing.farmersdelight.common.loot.modifier.AddItemModifier;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

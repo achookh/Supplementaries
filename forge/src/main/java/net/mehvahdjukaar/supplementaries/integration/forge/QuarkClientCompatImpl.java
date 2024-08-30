@@ -27,7 +27,6 @@ import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.violetmoon.quark.api.event.UsageTickerEvent;
 import org.violetmoon.quark.content.client.module.ImprovedTooltipsModule;
-import org.violetmoon.zeta.util.ItemNBTHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,8 +53,9 @@ public class QuarkClientCompatImpl {
         if (QuarkClientCompat.canRenderQuarkTooltip()) {
             Item item = stack.getItem();
             if (item instanceof SafeItem || item instanceof SackItem) {
-                CompoundTag cmp = ItemNBTHelper.getCompound(stack, "BlockEntityTag", false);
-                if (cmp.contains("LootTable")) return;
+                CompoundTag cmp = stack.getTagElement("BlockEntityTag");
+
+                if (cmp == null || cmp.contains("LootTable")) return;
 
                 if (item instanceof SafeItem) {
                     DUMMY_SAFE_TILE.get().load(cmp);
