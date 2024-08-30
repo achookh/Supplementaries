@@ -1,2 +1,3 @@
-- fixed a server crash
-- updated breezy compat
+- fixed slice map recipe being broken
+- fixed notice board and pulley gui not opening
+- fixed a crash with bomb and gunpowder
