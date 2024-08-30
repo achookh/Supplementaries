@@ -3,6 +3,7 @@ package net.mehvahdjukaar.supplementaries.common.block.tiles;
 
 import net.mehvahdjukaar.moonlight.api.block.IOwnerProtected;
 import net.mehvahdjukaar.moonlight.api.block.MimicBlockTile;
+import net.mehvahdjukaar.moonlight.api.client.IScreenProvider;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
 import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
@@ -17,6 +18,7 @@ import net.mehvahdjukaar.supplementaries.common.items.SignPostItem;
 import net.mehvahdjukaar.supplementaries.integration.CompatHandler;
 import net.mehvahdjukaar.supplementaries.integration.FramedBlocksCompat;
 import net.mehvahdjukaar.supplementaries.reg.ModRegistry;
+import net.mehvahdjukaar.supplementaries.reg.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -24,7 +26,6 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -44,7 +45,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 
-public class SignPostBlockTile extends MimicBlockTile implements ITextHolderProvider, IOwnerProtected {
+public class SignPostBlockTile extends MimicBlockTile implements ITextHolderProvider, IOwnerProtected, IScreenProvider {
 
     public static final ModelDataKey<Boolean> FRAMED_KEY = ModBlockProperties.FRAMED;
     public static final ModelDataKey<Boolean> SLIM_KEY = ModBlockProperties.SLIM;
@@ -78,6 +79,11 @@ public class SignPostBlockTile extends MimicBlockTile implements ITextHolderProv
     @Override
     public TextHolder getTextHolder(int i) {
         return getSign(i == 0).text;
+    }
+
+    @Override
+    public TextHolder getTextHolderAt(Vec3 hit) {
+        return getClickedSign(hit).text;
     }
 
     @Override
@@ -150,6 +156,11 @@ public class SignPostBlockTile extends MimicBlockTile implements ITextHolderProv
 
     @Override
     public void openScreen(Level level, BlockPos pos, Player player) {
+        SignPostScreen.open(this);
+    }
+
+    @Override
+    public void openScreen(Level level, BlockPos pos, Player player, Direction direction) {
         SignPostScreen.open(this);
     }
 
@@ -298,7 +309,7 @@ public class SignPostBlockTile extends MimicBlockTile implements ITextHolderProv
 
                 this.setChanged();
                 level.sendBlockUpdated(pos, state, state, 3);
-                level.playSound(null, pos, SoundEvents.ITEM_FRAME_ROTATE_ITEM, SoundSource.BLOCKS, 1.0F, 0.6F);
+                level.playSound(null, pos, ModSounds.BLOCK_ROTATE.get(), SoundSource.BLOCKS, 1.0F, 1);
                 return InteractionResult.CONSUME;
             }
             //change direction with compass
@@ -380,4 +391,3 @@ public class SignPostBlockTile extends MimicBlockTile implements ITextHolderProv
     }
 
 }
-

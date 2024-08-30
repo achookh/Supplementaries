@@ -3,6 +3,7 @@ package net.mehvahdjukaar.supplementaries.common.block.blocks;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.supplementaries.common.block.ModBlockProperties;
 import net.mehvahdjukaar.supplementaries.common.block.tiles.SpeakerBlockTile;
+import net.mehvahdjukaar.supplementaries.common.entities.SlingshotProjectileEntity;
 import net.mehvahdjukaar.supplementaries.common.utils.BlockUtil;
 import net.mehvahdjukaar.supplementaries.reg.ModParticles;
 import net.mehvahdjukaar.supplementaries.reg.ModRegistry;
@@ -124,7 +125,7 @@ public class SpeakerBlock extends Block implements EntityBlock {
             }
             // client
             if (player instanceof ServerPlayer serverPlayer) {
-                tile.tryOpeningEditGui(serverPlayer, pos);
+                tile.tryOpeningEditGui(serverPlayer, pos, stack);
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }

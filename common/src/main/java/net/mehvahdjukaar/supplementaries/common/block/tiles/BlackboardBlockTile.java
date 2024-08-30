@@ -1,21 +1,27 @@
 package net.mehvahdjukaar.supplementaries.common.block.tiles;
 
 import net.mehvahdjukaar.moonlight.api.block.IOwnerProtected;
+import net.mehvahdjukaar.moonlight.api.client.IScreenProvider;
 import net.mehvahdjukaar.moonlight.api.client.model.ExtraModelData;
 import net.mehvahdjukaar.moonlight.api.client.model.IExtraModelDataProvider;
 import net.mehvahdjukaar.moonlight.api.client.model.ModelDataKey;
+import net.mehvahdjukaar.supplementaries.Supplementaries;
 import net.mehvahdjukaar.supplementaries.client.BlackboardManager.Key;
 import net.mehvahdjukaar.supplementaries.client.screens.BlackBoardScreen;
-import net.mehvahdjukaar.supplementaries.common.block.IOnePlayerGui;
+import net.mehvahdjukaar.supplementaries.common.block.IOnePlayerInteractable;
 import net.mehvahdjukaar.supplementaries.common.block.IWaxable;
 import net.mehvahdjukaar.supplementaries.common.block.ModBlockProperties;
 import net.mehvahdjukaar.supplementaries.common.block.blocks.BlackboardBlock;
 import net.mehvahdjukaar.supplementaries.common.block.blocks.NoticeBoardBlock;
 import net.mehvahdjukaar.supplementaries.reg.ModRegistry;
+import net.mehvahdjukaar.supplementaries.reg.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -25,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public class BlackboardBlockTile extends BlockEntity implements IOwnerProtected,
-        IOnePlayerGui, IWaxable, IExtraModelDataProvider {
+        IOnePlayerInteractable, IScreenProvider, IWaxable, IExtraModelDataProvider {
 
     public static final ModelDataKey<Key> BLACKBOARD_KEY = ModBlockProperties.BLACKBOARD;
 
@@ -44,12 +50,9 @@ public class BlackboardBlockTile extends BlockEntity implements IOwnerProtected,
     }
 
     @Override
-    public ExtraModelData getExtraModelData() {
-        return ExtraModelData.builder()
-                .with(BLACKBOARD_KEY, getTextureKey())
-                .build();
+    public void addExtraModelData(ExtraModelData.Builder builder) {
+        builder.with(BLACKBOARD_KEY, getTextureKey());
     }
-
 
     public Key getTextureKey() {
         if (textureKey == null) refreshTextureKey();
@@ -141,7 +144,7 @@ public class BlackboardBlockTile extends BlockEntity implements IOwnerProtected,
         long[] unpacked = new long[16];
         var chars = packed.toCharArray();
         int j = 0;
-        for (int i = 0; i+3 < chars.length; i+=4) {
+        for (int i = 0; i + 3 < chars.length; i += 4) {
             unpacked[j] = (long) chars[i + 3] << 48 | (long) chars[i + 2] << 32 | (long) chars[i + 1] << 16 | chars[i];
             j++;
         }
@@ -152,23 +155,23 @@ public class BlackboardBlockTile extends BlockEntity implements IOwnerProtected,
         long[] unpacked = new long[16];
         var chars = packed.toCharArray();
         int j = 0;
-        for (int i = 0; i+3< chars.length; i+=4) {
+        for (int i = 0; i + 3 < chars.length; i += 4) {
             long l = 0;
             char c = chars[i];
-            for(int k = 0; k<4; k++){
-                l = l | (((c>>k)&1)<<4*k);
+            for (int k = 0; k < 4; k++) {
+                l = l | (((c >> k) & 1) << 4 * k);
             }
-            char c2 = chars[i+1];
-            for(int k = 0; k<4; k++){
-                l = l | ((long) ((c2 >> k) & 1) <<(16+(4*k)));
+            char c2 = chars[i + 1];
+            for (int k = 0; k < 4; k++) {
+                l = l | ((long) ((c2 >> k) & 1) << (16 + (4 * k)));
             }
-            char c3 = chars[i+2];
-            for(int k = 0; k<4; k++){
-                l = l | ((long) ((c3 >> k) & 1) <<(32+(4*k)));
+            char c3 = chars[i + 2];
+            for (int k = 0; k < 4; k++) {
+                l = l | ((long) ((c3 >> k) & 1) << (32 + (4 * k)));
             }
-            char c4 = chars[i+3];
-            for(int k = 0; k<4; k++){
-                l = l | ((long) ((c4 >> k) & 1) <<(48+(4*k)));
+            char c4 = chars[i + 3];
+            for (int k = 0; k < 4; k++) {
+                l = l | ((long) ((c4 >> k) & 1) << (48 + (4 * k)));
             }
             unpacked[j] = l;
             j++;
@@ -180,24 +183,24 @@ public class BlackboardBlockTile extends BlockEntity implements IOwnerProtected,
         StringBuilder builder = new StringBuilder();
         for (var l : packed) {
             char c = 0;
-            for(int k = 0; k<4; k++){
-                byte h = (byte) ((l >>4*k)&1);
-                c = (char) (c | (h<<k));
+            for (int k = 0; k < 4; k++) {
+                byte h = (byte) ((l >> 4 * k) & 1);
+                c = (char) (c | (h << k));
             }
             char c1 = 0;
-            for(int k = 0; k<4; k++){
-                byte h = (byte) ((l >>(16+(4*k)))&1);
-                c1 = (char) (c1 | (h<<k));
+            for (int k = 0; k < 4; k++) {
+                byte h = (byte) ((l >> (16 + (4 * k))) & 1);
+                c1 = (char) (c1 | (h << k));
             }
             char c2 = 0;
-            for(int k = 0; k<4; k++){
-                byte h = (byte) ((l >>(32+(4*k)))&1);
-                c2 = (char) (c2 | (h<<k));
+            for (int k = 0; k < 4; k++) {
+                byte h = (byte) ((l >> (32 + (4 * k))) & 1);
+                c2 = (char) (c2 | (h << k));
             }
             char c3 = 0;
-            for(int k = 0; k<4; k++){
-                byte h = (byte) ((l >>(48+(4*k)))&1);
-                c3 = (char) (c3 | (h<<k));
+            for (int k = 0; k < 4; k++) {
+                byte h = (byte) ((l >> (48 + (4 * k))) & 1);
+                c3 = (char) (c3 | (h << k));
             }
             builder.append(c).append(c1).append(c2).append(c3);
         }
@@ -285,5 +288,19 @@ public class BlackboardBlockTile extends BlockEntity implements IOwnerProtected,
     @Override
     public void setPlayerWhoMayEdit(UUID playerWhoMayEdit) {
         this.playerWhoMayEdit = playerWhoMayEdit;
+    }
+
+    public boolean tryAcceptingClientPixels(ServerPlayer player, byte[][] pixels) {
+        if (this.isEditingPlayer(player)) {
+            level.playSound(null, this.worldPosition, SoundEvents.VILLAGER_WORK_CARTOGRAPHER,
+                    SoundSource.BLOCKS, 1, 1);
+            this.setPixels(pixels);
+            this.setPlayerWhoMayEdit(null);
+            return true;
+        } else {
+            Supplementaries.LOGGER.warn("Player {} just tried to change non-editable blackboard block",
+                    player.getName().getString());
+        }
+        return false;
     }
 }

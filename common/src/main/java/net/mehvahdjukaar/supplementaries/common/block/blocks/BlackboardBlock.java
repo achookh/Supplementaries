@@ -38,7 +38,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -89,10 +88,10 @@ public class BlackboardBlock extends WaterBlock implements EntityBlock, IWashabl
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return switch (state.getValue(FACING)) {
-            default -> SHAPE_NORTH;
             case SOUTH -> SHAPE_SOUTH;
             case EAST -> SHAPE_EAST;
             case WEST -> SHAPE_WEST;
+            default -> SHAPE_NORTH;
         };
     }
 
@@ -140,11 +139,11 @@ public class BlackboardBlock extends WaterBlock implements EntityBlock, IWashabl
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand handIn,
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
                                  BlockHitResult hit) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof BlackboardBlockTile te && te.isAccessibleBy(player)) {
-            ItemStack stack = player.getItemInHand(handIn);
-            InteractionResult result = te.tryWaxing(level, pos, player, handIn);
+            ItemStack stack = player.getItemInHand(hand);
+            InteractionResult result = te.tryWaxing(level, pos, player, hand);
 
             if (result.consumesAction()) {
                 level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(player, level.getBlockState(pos)));
@@ -176,35 +175,33 @@ public class BlackboardBlock extends WaterBlock implements EntityBlock, IWashabl
                     CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, pos, stack);
                     player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
                 }
-                return InteractionResult.sidedSuccess(level.isClientSide);
+                return InteractionResult.CONSUME;
             }
 
-            UseMode mode = CommonConfigs.Building.BLACKBOARD_MODE.get();
+            UseMode config = CommonConfigs.Building.BLACKBOARD_MODE.get();
 
-            if (hit.getDirection() == state.getValue(FACING) && mode.canManualDraw()) {
+            if (hit.getDirection() == state.getValue(FACING) && config.canManualDraw()) {
 
                 DyeColor color = getStackChalkColor(stack);
                 if (color != null) {
                     //exit early for client
-                    if (!level.isClientSide) {
-                        Vector2i pair = getHitSubPixel(hit);
-                        int x = pair.x();
-                        int y = pair.y();
+                    Vector2i pair = getHitSubPixel(hit);
+                    int x = pair.x();
+                    int y = pair.y();
 
-                        byte newColor = colorToByte(color);
-                        if (te.getPixel(x, y) != newColor) {
-                            te.setPixel(x, y, newColor);
-                            te.setChanged(); //this also updates clients
-                        }
+                    byte newColor = colorToByte(color);
+                    if (te.getPixel(x, y) != newColor) {
+                        te.setPixel(x, y, newColor);
+                        te.setChanged(); //this also updates clients
                     }
-                    return InteractionResult.sidedSuccess(level.isClientSide);
+                    return InteractionResult.CONSUME;
                 }
             }
-            if (mode.canOpenGui()) {
+            if (config.canOpenGui()) {
                 if (player instanceof ServerPlayer serverPlayer) {
-                    te.tryOpeningEditGui(serverPlayer, pos);
+                    te.tryOpeningEditGui(serverPlayer, pos, stack);
                 }
-                return InteractionResult.sidedSuccess(level.isClientSide);
+                return InteractionResult.CONSUME;
             }
         }
         return InteractionResult.SUCCESS;
@@ -222,11 +219,9 @@ public class BlackboardBlock extends WaterBlock implements EntityBlock, IWashabl
         }
     }
 
-
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        boolean flag = context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER;
-        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, flag);
+        return super.getStateForPlacement(context).setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Nullable

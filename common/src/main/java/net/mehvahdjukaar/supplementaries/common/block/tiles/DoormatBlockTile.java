@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.supplementaries.common.block.tiles;
 
 import net.mehvahdjukaar.moonlight.api.block.ItemDisplayTile;
+import net.mehvahdjukaar.moonlight.api.client.IScreenProvider;
 import net.mehvahdjukaar.supplementaries.client.screens.DoormatScreen;
 import net.mehvahdjukaar.supplementaries.common.block.ITextHolderProvider;
 import net.mehvahdjukaar.supplementaries.common.block.TextHolder;
@@ -12,14 +13,18 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class DoormatBlockTile extends ItemDisplayTile implements ITextHolderProvider {
+public class DoormatBlockTile extends ItemDisplayTile implements ITextHolderProvider, IScreenProvider {
     public static final int MAX_LINES = 3;
 
     public final TextHolder textHolder;
@@ -63,7 +68,12 @@ public class DoormatBlockTile extends ItemDisplayTile implements ITextHolderProv
     }
 
     @Override
-    public void openScreen(Level level, BlockPos pos, Player player) {
+    public void openScreen(Level level, BlockPos pos, Player player, Direction direction) {
+        DoormatScreen.open(this);
+    }
+
+    @Override
+    public void openScreen(Level level, BlockPos blockPos, Player player) {
         DoormatScreen.open(this);
     }
 
@@ -90,5 +100,22 @@ public class DoormatBlockTile extends ItemDisplayTile implements ITextHolderProv
     @Override
     public UUID getPlayerWhoMayEdit() {
         return playerWhoMayEdit;
+    }
+
+
+    @Override
+    public boolean canTakeItem(Container container, int i, ItemStack itemStack) {
+        return false;
+    }
+
+    @Override
+    public boolean canPlaceItem(int index, ItemStack stack) {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
+        return null;
     }
 }

@@ -34,7 +34,7 @@ public class NoticeBoardBlock extends Block implements EntityBlock {
     public NoticeBoardBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
-                        .setValue(CULLED, false).setValue(POWERED,false)
+                .setValue(CULLED, false).setValue(POWERED,false)
                 .setValue(FACING, Direction.NORTH).setValue(HAS_BOOK, false));
     }
 

@@ -172,8 +172,8 @@ public class NoticeBoardBlockTile extends ItemDisplayTile implements Nameable, I
     }
 
     @Override
-    public AbstractContainerMenu createMenu(int id, Inventory player) {
-        return new NoticeBoardContainerMenu(id, player, this);
+    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+        return new NoticeBoardContainerMenu(id, inventory, this);
     }
 
     @Override
@@ -283,7 +283,7 @@ public class NoticeBoardBlockTile extends ItemDisplayTile implements Nameable, I
             return InteractionResult.PASS;
         }
         if (!level.isClientSide) {
-            this.tryOpeningEditGui((ServerPlayer) player, pos);
+            this.tryOpeningEditGui((ServerPlayer) player, pos, player.getItemInHand(handIn));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
@@ -301,22 +301,6 @@ public class NoticeBoardBlockTile extends ItemDisplayTile implements Nameable, I
     @Override
     public TextHolder getTextHolder(int ind) {
         return textHolder;
-    }
-
-    // why is this here? TODO: remove
-    @Override
-    public void openScreen(Level level, BlockPos blockPos, Player player) {
-    }
-
-    @Override
-    public void openScreen(Level level, BlockPos pos, Player player, Direction direction) {
-
-        //unused
-    }
-
-    @Override
-    public boolean shouldUseContainerMenu() {
-        return true;
     }
 
     @Override

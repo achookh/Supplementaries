@@ -8,21 +8,27 @@ import net.minecraft.server.network.FilteredText;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
 
 //replicates what SignBlock does + more
-public interface ITextHolderProvider extends IOnePlayerGui, IWashable, IWaxable {
+public interface ITextHolderProvider extends IOnePlayerInteractable, IWashable, IWaxable {
 
     TextHolder getTextHolder(int ind);
 
     default TextHolder getTextHolder() {
         return getTextHolder(0);
+    }
+
+    default TextHolder getTextHolderAt(Vec3 hit) {
+        return getTextHolder();
     }
 
     default int textHoldersCount() {
@@ -36,18 +42,16 @@ public interface ITextHolderProvider extends IOnePlayerGui, IWashable, IWaxable 
             return true;
         }
         boolean success = false;
-        for(int i = 0; i<this.textHoldersCount(); i++){
-            var text = getTextHolder(i);
+        var text = getTextHolderAt(Vec3.ZERO);
 
-            if (!text.isEmpty(null)) {
-                text.clear();
-                success = true;
-            }
+        if (!text.isEmpty(null)) {
+            text.clear();
+            success = true;
         }
-        if(success){
-            if(this instanceof BlockEntity be){
+        if (success) {
+            if (this instanceof BlockEntity be) {
                 be.setChanged();
-                level.sendBlockUpdated(pos, state,state, 3);
+                level.sendBlockUpdated(pos, state, state, 3);
             }
             return true;
         }
@@ -55,8 +59,7 @@ public interface ITextHolderProvider extends IOnePlayerGui, IWashable, IWaxable 
     }
 
     default boolean tryAcceptingClientText(BlockPos pos, ServerPlayer player, List<List<FilteredText>> filteredText) {
-        this.validatePlayerWhoMayEdit(player.level(), pos);
-        if (!this.isWaxed() && player.getUUID().equals(this.getPlayerWhoMayEdit())) {
+        if (!this.isWaxed() && this.isEditingPlayer(player)) {
             for (int i = 0; i < filteredText.size(); i++) {
                 var holder = this.getTextHolder(i);
                 holder.acceptClientMessages(player, filteredText.get(i));
@@ -72,14 +75,14 @@ public interface ITextHolderProvider extends IOnePlayerGui, IWashable, IWaxable 
 
 
     @Override
-    default boolean tryOpeningEditGui(ServerPlayer player, BlockPos pos) {
+    default boolean tryOpeningEditGui(ServerPlayer player, BlockPos pos, ItemStack stack) {
         boolean filtering = player.isTextFilteringEnabled();
         for (int i = 0; i < this.textHoldersCount(); i++) {
             if (!this.getTextHolder(i).hasEditableText(filtering)) {
                 return false;
             }
         }
-        return IOnePlayerGui.super.tryOpeningEditGui(player, pos);
+        return IOnePlayerInteractable.super.tryOpeningEditGui(player, pos, stack);
     }
 
     //calls all interfaces methods
@@ -99,11 +102,11 @@ public interface ITextHolderProvider extends IOnePlayerGui, IWashable, IWaxable 
             return result;
         }
         if (player instanceof ServerPlayer serverPlayer &&
-                this.tryOpeningEditGui(serverPlayer, pos)) {
+                this.tryOpeningEditGui(serverPlayer, pos, player.getItemInHand(hand))) {
             return InteractionResult.CONSUME;
         }
         return InteractionResult.SUCCESS;
-       // return InteractionResult.PASS;
+        // return InteractionResult.PASS;
     }
 
 }

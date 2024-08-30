@@ -93,6 +93,11 @@ public class SlingshotProjectileEntity extends ImprovedProjectileEntity implemen
     }
 
     @Override
+    protected ColliderType getColliderType() {
+        return ColliderType.RAY;
+    }
+
+    @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return PlatHelper.getEntitySpawnPacket(this);
     }
