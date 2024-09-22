@@ -37,7 +37,6 @@ public class FlammableEffect extends MobEffect {
         int ticks = pLivingEntity.getRemainingFireTicks();
         if (ticks <= 0) return true;
         if (ticks <= 8 * 20) {
-            pLivingEntity.setSecondsOnFire(8);
         }
 
         Level level = pLivingEntity.level();

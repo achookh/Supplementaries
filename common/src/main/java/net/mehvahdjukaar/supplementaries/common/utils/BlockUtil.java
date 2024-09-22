@@ -94,7 +94,6 @@ public class BlockUtil {
     }
 
     public static void loadTileFromItem(BlockEntity tile, ItemStack stack) {
-        tile.loadWithComponents();
     }
 
     @Nullable
@@ -103,7 +102,6 @@ public class BlockUtil {
             Block block = blockItem.getBlock();
             if (block instanceof EntityBlock entityBlock) {
                 BlockEntity te = entityBlock.newBlockEntity(BlockPos.ZERO, block.defaultBlockState());
-                if (te != null) te.load(tag);
                 return te;
             }
         }

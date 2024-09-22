@@ -94,7 +94,6 @@ public class GenericProjectileBehavior implements IBallisticBehavior {
         testLevel.setup();
 
         if (projectile.getItem() instanceof ArrowItem ai) {
-            return ai.createArrow(testLevel, projectile, fakePlayer);
         }
         //create from item
 

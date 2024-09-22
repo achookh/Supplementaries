@@ -256,56 +256,12 @@ public class DispenserMinecartEntity extends Minecart implements Container, Menu
         } else {
             ItemStack itemstack = this.dispenser.getItem(i);
             try {
-                DispenseItemBehavior dispenseitembehavior =
-                        ((DispenserBlock) Blocks.DISPENSER).getDispenseMethod(itemstack);
-                if (dispenseitembehavior != DispenseItemBehavior.NOOP) {
-                    MovingBlockSource<?> blockSource = new MovingBlockSource<>(this, dispenser);
-                    // sub optimal. Just works for projectiles. we cant use fake level as block source uses ServerLevel...
-                    ItemStack dispensed;
-                    if (CommonConfigs.Redstone.DISPENSER_MINECART_ANGLE.get() && dispenseitembehavior instanceof AbstractProjectileBehaviorAccessor pb) {
-                        dispensed = executeAbstractProjectileBehavior(pb, blockSource, itemstack);
-                    } else dispensed = dispenseitembehavior.dispense(blockSource, itemstack);
-
-                    this.dispenser.setItem(i, dispensed);
-                }
             } catch (Exception e) {
                 Supplementaries.LOGGER.warn("Failed to execute Dispenser Minecart behavior for item {}", itemstack.getItem());
             }
         }
         ((ILevelEventRedirect) pLevel).supp$setRedirected(false, Vec3.ZERO);
 
-    }
-
-    private ItemStack executeAbstractProjectileBehavior(AbstractProjectileBehaviorAccessor ap, BlockSource source, ItemStack stack) {
-        Level level = source.level();
-
-        Position position = DispenserBlock.getDispensePosition(source);
-        Projectile projectile = ap.invokeGetProjectile(level, position, stack);
-
-
-        Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
-        projectile.shoot(direction.getStepX(), ((float) direction.getStepY() + 0.1F), direction.getStepZ(),
-                ap.invokeGetPower(), ap.invokeGetUncertainty());
-
-        //shit code incoming. server doenst sync xRot. TODO: change in 1.21
-        BlockState rail = level.getBlockState(this.blockPosition());
-        if (rail.getBlock() instanceof BaseRailBlock br) {
-            RailShape railShape = rail.getValue(br.getShapeProperty());
-            boolean ascending = railShape.isAscending();
-            if (ascending) {
-                adjustMovementRelativeToRail(projectile, railShape);
-            }
-        }
-        Vec3 mySpeed = this.getDeltaMovement().scale(0.25f); // too much otherwise
-        projectile.setDeltaMovement(projectile.getDeltaMovement().add(mySpeed.x, this.onGround() ? 0.0 : mySpeed.y, mySpeed.z));
-
-
-        level.addFreshEntity(projectile);
-        stack.shrink(1);
-
-        ap.invokePlaySound(source);
-        source.getLevel().levelEvent(2000, source.getPos(), direction.get3DDataValue());
-        return stack;
     }
 
     private static void adjustMovementRelativeToRail(Projectile projectile, RailShape railShape) {

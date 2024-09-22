@@ -82,19 +82,7 @@ public class WaySignStructure extends Structure {
         }
         BlockPos blockPos = suitablePosition.get();
 
-        // Return the pieces' generator that is now set up so that the game runs it when it needs to create the layout of structure pieces.
-        return JigsawPlacement.addPieces(
-                context, // Used for JigsawPlacement to get all the proper behaviors done.
-                this.startPool, // The starting pool to use to create the structure layout from
-                this.startJigsawName, // Can be used to only spawn from one Jigsaw block. But we don't need to worry about this.
-                3, // How deep a branch of pieces can go away from center piece. (5 means branches cannot be longer than 5 pieces from center piece)
-                blockPos, // Where to spawn the structure.
-                false, // "useExpansionHack" This is for legacy villages to generate properly. You should keep this false always.
-                Optional.empty(), // Adds the terrain height's y value to the passed in blockpos's y value. (This uses WORLD_SURFACE_WG heightmap which stops at top water too)
-                // Here, blockpos's y value is 60 which means the structure spawn 60 blocks above terrain height.
-                // Set this to false for structure to be place only at the passed in blockpos's Y value instead.
-                // Definitely keep this false when placing structures in the nether as otherwise, heightmap placing will put the structure on the Bedrock roof.
-                32);
+      return null;
     }
 
 
@@ -102,7 +90,7 @@ public class WaySignStructure extends Structure {
      * gets spawning position or empty if not suitable
      */
     private static Optional<BlockPos> getSuitablePosition(Structure.GenerationContext context, WaySignStructure structure) {
-
+if(true)return Optional.empty();
         ChunkPos chunkPos = context.chunkPos();
         ChunkGenerator generator = context.chunkGenerator();
         LevelHeightAccessor levelHeightAccessor = context.heightAccessor();

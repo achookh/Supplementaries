@@ -28,17 +28,6 @@ public class RopeArrowItem extends ArrowItem {
         super(builder);
     }
 
-    @Override
-    public AbstractArrow createArrow(Level world, ItemStack stack, LivingEntity shooter) {
-        int charges = getRopes(stack);
-
-        return new RopeArrowEntity(world, shooter, charges);
-    }
-
-    public static int getRopes(ItemStack stack) {
-        return stack.getMaxDamage() - stack.getDamageValue();
-    }
-
     public static void addRopes(ItemStack stack, int ropes) {
         stack.setDamageValue(stack.getDamageValue() - ropes);
     }
@@ -98,60 +87,6 @@ public class RopeArrowItem extends ArrowItem {
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        tooltip.add(Component.translatable("message.supplementaries.rope_arrow_tooltip", getRopes(stack), getRopeCapacity()));
-        if (worldIn == null) return;
-        if (!MiscUtils.showsHints(worldIn, flagIn)) return;
-        var override = CommonConfigs.getRopeOverride();
-        if (override != null) {
-
-            tooltip.add(Component.translatable("message.supplementaries.rope_arrow", override.key().location().toString())
-                    .withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
-        }
-    }
-
-    //TODO
-    @Override
-    public boolean overrideStackedOnOther(ItemStack ropeArrow, Slot pSlot, ClickAction pAction, Player pPlayer) {
-        if (pAction != ClickAction.SECONDARY) {
-            ItemStack itemstack = pSlot.getItem();
-            if (isValidRope(itemstack)) {
-                float ropes = getRopes(ropeArrow);
-                int missingRope = (int) (ropeArrow.getMaxDamage() - ropes);
-                if (missingRope != 0) {
-                    ItemStack ropeTaken = pSlot.safeTake(itemstack.getCount(), missingRope, pPlayer);
-                    int ropeWeCanAdd = Math.min(missingRope, ropeTaken.getCount());
-                    addRopes(ropeArrow, ropeWeCanAdd);
-                    this.playInsertSound(pPlayer);
-                    return true;
-                    //pSlot.set(remaining);
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean overrideOtherStackedOnMe(ItemStack ropeArrow, ItemStack ropeStack, Slot pSlot, ClickAction pAction,
-                                            Player pPlayer, SlotAccess pAccess) {
-        if (pAction == ClickAction.SECONDARY && pSlot.allowModification(pPlayer)) {
-            if (isValidRope(ropeStack)) {
-                float ropes = getRopes(ropeArrow);
-                int missingRope = (int) (ropeArrow.getMaxDamage() - ropes);
-                if (missingRope != 0) {
-                    int ropeWeCanAdd = Math.min(missingRope, ropeStack.getCount());
-                    addRopes(ropeArrow, ropeWeCanAdd);
-                    ropeStack.shrink(ropeWeCanAdd);
-                    this.playInsertSound(pPlayer);
-                    return true;
-                }
-            }
-        }
         return false;
     }
 

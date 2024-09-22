@@ -31,6 +31,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.MapItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
@@ -197,11 +198,11 @@ public class CannonBlock extends DirectionalBlock implements EntityBlock, ILight
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof CannonBlockTile tile) {
             if (player instanceof ServerPlayer sp) {
-                tile.tryOpeningEditGui(sp, pos, player.getItemInHand(hand));
+                tile.tryOpeningEditGui(sp, pos, player.getItemInHand(InteractionHand.MAIN_HAND));
             }
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
-        return super.useWithoutItem(state, level, pos, player, hand, hit);
+        return super.useWithoutItem(state, level, pos, player,  hitResult);
     }
 
     @Override

@@ -34,7 +34,6 @@ public class ClientEventsFabric {
     public static void init() {
         ClientEntityEvents.ENTITY_LOAD.register(ClientEvents::onEntityLoad);
 
-        ItemTooltipCallback.EVENT.register(ClientEvents::onItemTooltip);
         ScreenEvents.AFTER_INIT.register((m, s, x, y) -> {
             if (CompatHandler.CLOTH_CONFIG || CompatHandler.YACL) {
                 List<? extends GuiEventListener> listeners = s.children();
@@ -47,7 +46,6 @@ public class ClientEventsFabric {
         ClientTickEvents.END_CLIENT_TICK.register(ClientEvents::onClientTick);
 
 
-        HudRenderCallback.EVENT.register(ClientEventsFabric::onRenderHud);
 
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register((t, r, e, c) -> {
             if (r instanceof PlayerRenderer) {

@@ -123,8 +123,6 @@ public class BubbleBlock extends Block implements EntityBlock {
     protected boolean canPopBubble(Entity entity) {
         if (!CommonConfigs.Tools.BUBBLE_BREAK.get()) return false;
         if (entity instanceof LivingEntity le) {
-            return !CommonConfigs.Tools.BUBBLE_FEATHER_FALLING.get() ||
-                    EnchantmentHelper.getEnchantmentLevel(Enchantments.FALL_PROTECTION, le) == 0;
         }
         return true;
     }

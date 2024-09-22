@@ -2,6 +2,7 @@ package net.mehvahdjukaar.supplementaries.common.entities;
 
 import net.mehvahdjukaar.moonlight.api.entity.ImprovedProjectileEntity;
 import net.mehvahdjukaar.moonlight.api.platform.network.Message;
+import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.mehvahdjukaar.supplementaries.SuppPlatformStuff;
 import net.mehvahdjukaar.supplementaries.Supplementaries;
 import net.mehvahdjukaar.supplementaries.common.block.fire_behaviors.ProjectileStats;
@@ -86,7 +87,7 @@ public class CannonBallEntity extends ImprovedProjectileEntity {
     }
 
     @Override
-    protected float getGravity() {
+    public double getDefaultGravity() {
         return ProjectileStats.CANNONBALL_GRAVITY;
     }
 
@@ -189,7 +190,7 @@ public class CannonBallEntity extends ImprovedProjectileEntity {
                 this.setDeltaMovement(movement.scale(factor));
                 Message message = ClientBoundExplosionPacket.cannonball(exp, this);
 
-                NetworkHelper.sendToAllClientPlayersInDefaultRange(this.level(), pos, message);
+                NetworkHelper.sendToAllClientPlayersInDefaultRange((ServerLevel) this.level(), pos, message);
             }
             this.hasImpulse = true;
 

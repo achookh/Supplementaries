@@ -11,6 +11,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -117,8 +118,8 @@ public class NetheriteTrapdoorBlock extends TrapDoorBlock implements ILavaAndWat
     }
 
     @Override
-    public boolean canPlaceLiquid(BlockGetter p_204510_1_, BlockPos p_204510_2_, BlockState p_204510_3_, Fluid p_204510_4_) {
-        return ILavaAndWaterLoggable.super.canPlaceLiquid(p_204510_1_, p_204510_2_, p_204510_3_, p_204510_4_);
+    public boolean canPlaceLiquid(@Nullable Player player, BlockGetter p_204510_1_, BlockPos p_204510_2_, BlockState p_204510_3_, Fluid p_204510_4_) {
+        return ILavaAndWaterLoggable.super.canPlaceLiquid(player, p_204510_1_, p_204510_2_, p_204510_3_, p_204510_4_);
     }
 
     @Override
@@ -139,12 +140,17 @@ public class NetheriteTrapdoorBlock extends TrapDoorBlock implements ILavaAndWat
     }
 
     @Override
-    public ItemStack pickupBlock(LevelAccessor pLevel, BlockPos pPos, BlockState pState) {
-        return ILavaAndWaterLoggable.super.pickupBlock(pLevel, pPos, pState);
+    public ItemStack pickupBlock(@Nullable Player player, LevelAccessor pLevel, BlockPos pPos, BlockState pState) {
+        return ILavaAndWaterLoggable.super.pickupBlock(player, pLevel, pPos, pState);
     }
 
     @Override
     public Optional<SoundEvent> getPickupSound() {
         return super.getPickupSound();
+    }
+
+    @Override
+    public boolean isEnabled(FeatureFlagSet enabledFeatures) {
+        return super.isEnabled(enabledFeatures);
     }
 }

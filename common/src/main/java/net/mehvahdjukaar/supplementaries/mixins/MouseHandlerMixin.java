@@ -28,13 +28,5 @@ public abstract class MouseHandlerMixin {
         return true;
     }
 
-    // doesnt care about smooth panning in camera. that's why its here
-    @Inject(method = "onMove",
-            at = @At(target = "Lnet/minecraft/client/MouseHandler;turnPlayer()V", value = "INVOKE",
-                    shift = At.Shift.BEFORE)
-    )
-    protected void onMoveMouse(long windowPointer, double xpos, double ypos, CallbackInfo ci) {
-        double deltaX = xpos - this.xpos;
-        SelectableContainerItemHud.INSTANCE.ohMouseMoved(deltaX);
-    }
+
 }

@@ -100,8 +100,7 @@ public abstract class AbstractMobContainerItem extends BlockItem {
     }
 
     public boolean isFull(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-        return tag != null && tag.contains("BlockEntityTag");
+        return false;
     }
 
     //called from event for better compat
@@ -193,61 +192,6 @@ public abstract class AbstractMobContainerItem extends BlockItem {
             boolean success = false;
             Level world = context.getLevel();
             Vec3 v = context.getClickLocation();
-            if (com.contains("BucketHolder")) {
-                ItemStack bucketStack = ItemStack.of(com.getCompound("BucketHolder").getCompound("Bucket"));
-                if (bucketStack.getItem() instanceof BucketItem bi) {
-                    bi.checkExtraContent(player, world, bucketStack, context.getClickedPos());
-                    success = true;
-                }
-            } else if (com.contains("MobHolder")) {
-                CompoundTag nbt = com.getCompound("MobHolder");
-                Entity entity = EntityType.loadEntityRecursive(nbt.getCompound("EntityData"), world, o -> o);
-                if (entity != null) {
-
-                    success = true;
-                    if (!world.isClientSide) {
-                        //anger entity
-                        if (!player.isCreative() && entity instanceof NeutralMob ang && !entity.getType().is(ModTags.NON_ANGERABLE)) {
-                            ang.forgetCurrentTargetAndRefreshUniversalAnger();
-                            ang.setPersistentAngerTarget(player.getUUID());
-                            ang.setLastHurtByMob(player);
-                        }
-                        entity.absMoveTo(v.x(), v.y(), v.z(), context.getRotation(), 0);
-
-                        if (CommonConfigs.Functional.CAGE_PERSISTENT_MOBS.get() && entity instanceof Mob mob) {
-                            mob.setPersistenceRequired();
-                        }
-
-                        UUID temp = entity.getUUID();
-                        if (nbt.contains("UUID")) {
-                            UUID id = nbt.getUUID("UUID");
-                            entity.setUUID(id);
-                        }
-                        if (!world.addFreshEntity(entity)) {
-                            //spawn failed, reverting to old UUID
-                            entity.setUUID(temp);
-                            success = world.addFreshEntity(entity);
-                            if (!success) Supplementaries.LOGGER.warn("Failed to release caged mob");
-                        }
-                        //TODO fix sound categories
-                    }
-                    //create new uuid for creative itemStack
-                    if (player.isCreative() && nbt.contains("UUID")) {
-                        nbt.putUUID("UUID", Mth.createInsecureUUID(world.random));
-                    }
-                } else Supplementaries.LOGGER.error("Failed to load entity from itemstack");
-            }
-            if (success) {
-                if (!world.isClientSide) {
-                    this.playReleaseSound(world, v);
-                    if (!player.isCreative()) {
-                        ItemStack returnItem = new ItemStack(this);
-                        if (stack.hasCustomHoverName()) returnItem.setHoverName(stack.getHoverName());
-                        Utils.swapItemNBT(player, context.getHand(), stack, returnItem);
-                    }
-                }
-                return InteractionResult.sidedSuccess(world.isClientSide);
-            }
         }
         return super.useOn(context);
     }
@@ -261,12 +205,6 @@ public abstract class AbstractMobContainerItem extends BlockItem {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         MobContainerView content = stack.get(ModComponents.MOB_HOLDER_CONTENT.get());
         if (content != null) {
-            CompoundTag tag = content.getUnsafe();
-            CompoundTag com = tag.getCompound("MobHolder");
-            if (com.isEmpty()) com = tag.getCompound("BucketHolder");
-            if (com.contains("Name")) {
-                tooltipComponents.add(Component.translatable(com.getString("Name")).withStyle(ChatFormatting.GRAY));
-            }
         }
         if (MiscUtils.showsHints(tooltipFlag)) {
             this.addPlacementTooltip(tooltipComponents);

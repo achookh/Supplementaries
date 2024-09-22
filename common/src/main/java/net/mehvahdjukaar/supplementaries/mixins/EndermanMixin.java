@@ -20,14 +20,4 @@ public abstract class EndermanMixin extends Mob {
         super(entityType, level);
     }
 
-    @Inject(method = "dropCustomDeathLoot", at = @At("TAIL"))
-    protected void dropCustomDeathLoot(DamageSource damageSource, int looting, boolean hitByPlayer, CallbackInfo ci) {
-        Entity entity = damageSource.getEntity();
-        if (CommonConfigs.Redstone.ENDERMAN_HEAD_ENABLED.get() && CommonConfigs.Redstone.ENDERMAN_HEAD_DROP.get() && entity instanceof Creeper creeper) {
-            if (creeper.canDropMobsSkull()) {
-                creeper.increaseDroppedSkulls();
-                this.spawnAtLocation(ModRegistry.ENDERMAN_SKULL_ITEM.get());
-            }
-        }
-    }
 }

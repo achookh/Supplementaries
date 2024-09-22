@@ -15,19 +15,4 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(BowItem.class)
 public abstract class BowMixin {
 
-    @Inject(method = "releaseUsing",
-            at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/world/item/ItemStack;shrink(I)V"),
-            locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-    private void shrinkQuiverArrow(ItemStack stack, Level level, LivingEntity shooter,
-                                   int timeCharged, CallbackInfo ci, Player player,
-                                   boolean bl, ItemStack arrowStack, int i, float f, boolean bl2) {
-        if (!player.getInventory().hasAnyMatching(s -> s == arrowStack)) {
-            var q = QuiverItem.getQuiver(shooter);
-            if (!q.isEmpty()) {
-                var data = QuiverItem.getQuiverData(q);
-                if (data != null) data.consumeSelected();
-            }
-        }
-    }
 }

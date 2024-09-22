@@ -75,8 +75,7 @@
     "PartDefinitionMixin",
     "PlayerSocialManagerMixin",
     "RemotePlayerMixin",
-    "UndeadHorseRenderMixin",
-    "WrittenBookAccessMixin"
+    "UndeadHorseRenderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

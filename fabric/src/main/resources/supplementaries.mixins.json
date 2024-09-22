@@ -7,7 +7,6 @@
   "client": [
     "CompatIFMapAtlasTextureMixin",
     "CompatIFMapTextureMixin2",
-    "MC263524FixMixin",
     "MouseScrollMixin",
     "SkullBlockRendererMixin"
   ],

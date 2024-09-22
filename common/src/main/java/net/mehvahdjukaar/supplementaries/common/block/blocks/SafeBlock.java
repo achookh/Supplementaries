@@ -15,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
@@ -132,7 +133,7 @@ public class SafeBlock extends Block implements ILavaAndWaterLoggable, EntityBlo
             return InteractionResult.CONSUME;
         } else {
             if (level.getBlockEntity(pos) instanceof SafeBlockTile tile) {
-                if (tile.handleAction(player, handIn)) {
+                if (tile.handleAction(player, InteractionHand.MAIN_HAND)) {
                     return InteractionResult.CONSUME;
                 }
             }

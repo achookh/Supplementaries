@@ -61,7 +61,6 @@ public class Supplementaries {
         ModSounds.init();
         ModFluids.init();
         ModRegistry.init();
-        ModRecipes.init();
         ModMenuTypes.init();
         ModEntities.init();
         ModParticles.init();
@@ -72,7 +71,6 @@ public class Supplementaries {
         ModCreativeTabs.init();
         LootTablesInjects.init();
         InteractEventsHandler.init();
-        EmptySliceMapItem.init();
         WeatheredHandler.init();
         ColoredMapHandler.init();
         MapLightHandler.init();

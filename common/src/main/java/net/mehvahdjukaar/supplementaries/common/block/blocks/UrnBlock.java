@@ -223,8 +223,7 @@ public class UrnBlock extends FallingBlock implements EntityBlock, SimpleWaterlo
         } else {
             float oldLuck = builder.luck;
             ItemStack stack = builder.getOptionalParameter(LootContextParams.TOOL);
-            int f = stack == null ? 0 : EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, stack);
-            builder.withLuck(oldLuck + 0.25f * f);
+            builder.withLuck(oldLuck + 0.25f );
             var lootContext = builder.withParameter(LootContextParams.BLOCK_STATE, state).create(LootContextParamSets.BLOCK);
             ServerLevel serverlevel = lootContext.getLevel();
             LootTable loottable = serverlevel.getServer().reloadableRegistries().getLootTable(tableKey);
@@ -241,9 +240,6 @@ public class UrnBlock extends FallingBlock implements EntityBlock, SimpleWaterlo
 
     @Override
     public BlockState playerWillDestroy(Level pLevel, BlockPos pPos, BlockState pState, Player pPlayer) {
-        if (pLevel.isClientSide && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, pPlayer.getUseItem()) == 0) {
-            spawnExtraBrokenParticles(pState, pPos, pLevel);
-        }
         return super.playerWillDestroy(pLevel, pPos, pState, pPlayer);
     }
 

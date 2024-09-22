@@ -93,20 +93,15 @@ public abstract class ZombieHorseMixin extends AbstractHorse implements IConvert
             newHorse.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
 
             if (this.isSaddled()) {
-                newHorse.equipSaddle(null);
             }
             for (EquipmentSlot slot : EquipmentSlot.values()) {
                 ItemStack itemstack = this.getItemBySlot(slot);
                 if (!itemstack.isEmpty()) {
-                    if (EnchantmentHelper.hasBindingCurse(itemstack)) {
-                        newHorse.getSlot(slot.getIndex() + 300).set(itemstack);
-                    } else {
                         double d0 = this.getEquipmentDropChance(slot);
                         if (d0 > 1.0D) {
                             this.spawnAtLocation(itemstack);
                         }
                     }
-                }
             }
             ForgeHelper.onLivingConvert(this, newHorse);
         }

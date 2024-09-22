@@ -116,7 +116,7 @@ public class QuarkCompat {
     }
 
     public static boolean shouldHideOverlay(ItemStack stack) {
-        return UsesForCursesModule.staticEnabled && EnchantmentHelper.hasVanishingCurse(stack);
+        return false;
     }
 
     public static int getBannerPatternLimit(int current) {
@@ -146,7 +146,7 @@ public class QuarkCompat {
                                 }
                             }
                             //update tile entity in its list
-                            PistonsMoveTileEntitiesModule.setMovingBlockEntityData(level, pos, tile.saveWithFullMetadata());
+                            PistonsMoveTileEntitiesModule.setMovingBlockEntityData(level, pos, tile.saveWithFullMetadata(level.registryAccess()));
                         }
                     }
                     entity.hurt(BambooSpikesBlock.getDamageSource(level), sameDir ? 3 : 1);
@@ -160,8 +160,6 @@ public class QuarkCompat {
         BlockEntity tile = eb.newBlockEntity(pos, state);
         if (tile == null) return null;
         CompoundTag tileTag = PistonsMoveTileEntitiesModule.getMovingBlockEntityData(level, pos);
-        if (tileTag != null && tile.getType() == BuiltInRegistries.BLOCK_ENTITY_TYPE.get(ResourceLocation.tryParse(tileTag.getString("id"))))
-            tile.load(tileTag);
         return tile;
     }
 

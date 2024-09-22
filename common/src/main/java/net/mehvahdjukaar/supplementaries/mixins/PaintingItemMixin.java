@@ -31,14 +31,6 @@ public abstract class PaintingItemMixin extends Item {
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
         //TODO: use event
         if (ClientConfigs.Tweaks.PAINTINGS_TOOLTIPS.get() && type == EntityType.PAINTING) {
-            var tag = stack.getTag();
-            if (tag != null && tag.contains("EntityTag")) {
-                var v = ResourceLocation.tryParse(tag.getCompound("EntityTag").getString("variant"));
-                if (v != null) {
-                    var variant = BuiltInRegistries.PAINTING_VARIANT.getOptional(v);
-                    return variant.map(PaintingTooltip::new);
-                }
-            }
         }
         return Optional.empty();
     }

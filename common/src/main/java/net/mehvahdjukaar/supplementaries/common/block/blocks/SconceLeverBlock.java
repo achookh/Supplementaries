@@ -10,8 +10,10 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -36,22 +38,22 @@ public class SconceLeverBlock extends SconceWallBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-        InteractionResult result = super.use(state, worldIn, pos, player, handIn, hit);
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        ItemInteractionResult result = super.useItemOn(stack, state, level, pos, player, hand, hitResult);
         if (result.consumesAction()) {
-            this.updateNeighbors(state, worldIn, pos);
+            this.updateNeighbors(state, level, pos);
             return result;
         }
-        if (worldIn.isClientSide) {
+        if (level.isClientSide) {
             state.cycle(POWERED);
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
         } else {
-            BlockState blockstate = this.setPowered(state, worldIn, pos);
+            BlockState blockstate = this.setPowered(state, level, pos);
             boolean enabled = blockstate.getValue(POWERED);
             float f = enabled ? 0.6F : 0.5F;
-            worldIn.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, f);
-            worldIn.gameEvent(player, enabled ? GameEvent.BLOCK_ACTIVATE : GameEvent.BLOCK_DEACTIVATE, pos);
-            return InteractionResult.CONSUME;
+            level.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, f);
+            level.gameEvent(player, enabled ? GameEvent.BLOCK_ACTIVATE : GameEvent.BLOCK_DEACTIVATE, pos);
+            return ItemInteractionResult.CONSUME;
         }
     }
 
@@ -63,13 +65,13 @@ public class SconceLeverBlock extends SconceWallBlock {
     }
 
     @Override
-    public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (!isMoving && !state.is(newState.getBlock())) {
             if (state.getValue(POWERED)) {
-                this.updateNeighbors(state, worldIn, pos);
+                this.updateNeighbors(state, level, pos);
             }
         }
-        super.onRemove(state, worldIn, pos, newState, isMoving);
+        super.onRemove(state, level, pos, newState, isMoving);
     }
 
     @Override
@@ -124,10 +126,4 @@ public class SconceLeverBlock extends SconceWallBlock {
         return ret;
     }
 
-    @Override
-    public boolean extinguish(@Nullable Entity player, BlockState state, BlockPos pos, LevelAccessor world) {
-        boolean ret = super.extinguish(player, state, pos, world);
-        if (ret && world instanceof ServerLevel level) updateNeighbors(state, level, pos);
-        return ret;
-    }
 }

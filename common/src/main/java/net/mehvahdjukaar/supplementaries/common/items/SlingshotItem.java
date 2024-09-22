@@ -22,11 +22,13 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -34,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class SlingshotItem extends ProjectileWeaponItem implements Vanishable, IFirstPersonAnimationProvider, IThirdPersonAnimationProvider {
+public class SlingshotItem extends ProjectileWeaponItem implements IFirstPersonAnimationProvider, IThirdPersonAnimationProvider {
 
     public SlingshotItem(Properties properties) {
         super(properties);
@@ -48,10 +50,10 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable, I
 
             if (!projectileStack.isEmpty() && this.getAllSupportedProjectiles().test(projectileStack)) {
 
-                float power = getPowerForTime(stack, timeLeft);
+                float power = getPowerForTime(entity, stack, timeLeft);
                 if ((power >= 0.085D)) {
 
-                    int maxProjectiles = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, stack) > 0 ? 3 : 1;
+                    int maxProjectiles = 0;//
 
                     List<ItemStack> projectiles = new ArrayList<>();
 
@@ -74,7 +76,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable, I
                         float angle = 10;
                         for (int j = 0; j < count; j++) {
 
-                            boolean stasis = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.STASIS_ENCHANTMENT.get(), stack) != 0;
+                            boolean stasis = false;
                             InteractionHand hand = player.getUsedItemHand();
                             power *= (float) ((CommonConfigs.Tools.SLINGSHOT_RANGE.get() + (stasis ? 0.5 : 0)) * 1.1);
                             shootProjectile(world, entity, hand, stack, projectiles.get(j), count == 1 ? 1 : pitches[j], power, 1,
@@ -100,7 +102,6 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable, I
         vector3f.rotate(quaternionf);
         projectile.shoot(vector3f.x(), vector3f.y(), vector3f.z(), power, accuracy);
 
-        stack.hurtAndBreak(1, entity, (p) -> p.broadcastBreakEvent(hand));
         level.addFreshEntity(projectile);
 
         level.playSound(null, entity, ModSounds.SLINGSHOT_SHOOT.get(), SoundSource.PLAYERS, 1.0F,
@@ -119,8 +120,8 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable, I
         return 1.0F / (random.nextFloat() * 0.5F + 1.8F) + f;
     }
 
-    public float getPowerForTime(ItemStack stack, float timeLeft) {
-        float useTime = this.getUseDuration(stack) - timeLeft;
+    public float getPowerForTime(LivingEntity e, ItemStack stack, float timeLeft) {
+        float useTime = this.getUseDuration(stack, e) - timeLeft;
         float f = useTime / getChargeDuration(stack);
         //parabolic power increase
         f = (f * f + f * 2.0F) / 3.0F;
@@ -132,14 +133,15 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable, I
     }
 
     //this is max use time
+
     @Override
-    public int getUseDuration(ItemStack stack) {
-        return 72000;
+    public int getUseDuration(ItemStack itemStack, LivingEntity livingEntity) {
+        return 67777;
     }
 
     //actual use duration
     public static int getChargeDuration(ItemStack stack) {
-        int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.QUICK_CHARGE, stack);
+        int i = 0;
         int maxCharge = CommonConfigs.Tools.SLINGSHOT_CHARGE.get();
         return i == 0 ? maxCharge : maxCharge - (maxCharge / 4) * i;
     }
@@ -161,7 +163,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable, I
     }
 
     public SoundEvent getChargeSound(ItemStack stack) {
-        int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.QUICK_CHARGE, stack);
+        int i =0;
         return switch (i) {
             case 0 -> ModSounds.SLINGSHOT_CHARGE_0.get();
             case 1 -> ModSounds.SLINGSHOT_CHARGE_1.get();
@@ -209,6 +211,11 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable, I
     }
 
     @Override
+    protected void shootProjectile(LivingEntity shooter, Projectile projectile, int index, float velocity, float inaccuracy, float angle, @Nullable LivingEntity target) {
+
+    }
+
+    @Override
     public UseAnim getUseAnimation(ItemStack stack) {
         //need to use NONE for custom one
         return UseAnim.NONE;
@@ -250,26 +257,9 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable, I
         return false;
     }
 
+
     @Override
-    public void animateItemFirstPerson(LivingEntity entity, ItemStack stack, InteractionHand hand, PoseStack matrixStack, float partialTicks, float pitch, float attackAnim, float handHeight) {
-        //is using item
-        if (entity.isUsingItem() && entity.getUseItemRemainingTicks() > 0 && entity.getUsedItemHand() == hand) {
-            //bow anim
+    public void animateItemFirstPerson(Player player, ItemStack itemStack, InteractionHand interactionHand, HumanoidArm humanoidArm, PoseStack poseStack, float v, float v1, float v2, float v3) {
 
-            float timeLeft = stack.getUseDuration() - (entity.getUseItemRemainingTicks() - partialTicks + 1.0F);
-            float f12 = getPowerForTime(stack, timeLeft);
-
-            if (f12 > 0.1F) {
-                float f15 = Mth.sin((timeLeft - 0.1F) * 1.3F);
-                float f18 = f12 - 0.1F;
-                float f20 = f15 * f18;
-                matrixStack.translate(0, f20 * 0.004F, 0);
-            }
-
-            matrixStack.translate(0, 0, f12 * 0.04F);
-            matrixStack.scale(1.0F, 1.0F, 1.0F + f12 * 0.2F);
-            //matrixStack.mulPose(Axis.YN.rotationDegrees((float)k * 45.0F));
-        }
     }
-
 }

@@ -25,10 +25,6 @@ public class BlazeRodBlock extends StickBlock {
 
     @Override
     public void stepOn(Level world, BlockPos pos, BlockState state, Entity entity) {
-        if (!entity.fireImmune() && entity instanceof LivingEntity le && !EnchantmentHelper.hasFrostWalker(le)) {
-            if (!(entity instanceof Player p && p.isCreative()))
-                entity.setSecondsOnFire(2);
-        }
         super.stepOn(world, pos, state, entity);
     }
 

@@ -109,10 +109,6 @@ public abstract class LivingEntityMixin extends Entity implements ISlimeable {
     private void suppl$eatFromLunchBasket(ItemStack stack, int amount, CallbackInfo ci,
                                           @Local(argsOnly = true) LocalRef<ItemStack> food) {
         if (stack.getItem() instanceof LunchBoxItem li) {
-            var data = li.getComponentKey(stack);
-            if (data.canEatFrom()) {
-                food.set(data.getSelected());
-            }
         }
     }
 }

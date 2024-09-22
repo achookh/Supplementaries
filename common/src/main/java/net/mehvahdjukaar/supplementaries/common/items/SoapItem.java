@@ -32,12 +32,8 @@ import net.minecraft.world.level.Level;
 
 public class SoapItem extends Item {
 
-    public static final FoodProperties SOAP_FOOD = (new FoodProperties.Builder())
-            .nutrition(0).saturationMod(0.1F).alwaysEat().effect(
-                    new MobEffectInstance(MobEffects.POISON, 120, 2), 1).build();
-
     public SoapItem(Properties pProperties) {
-        super(pProperties.food(SOAP_FOOD));
+        super(pProperties);
     }
 
     @Override
@@ -101,7 +97,6 @@ public class SoapItem extends Item {
             success = true;
         } else if (target instanceof TamableAnimal ta && ta.isOwnedBy(player)) {
             if (target instanceof Wolf wolf) {
-                wolf.setCollarColor(DyeColor.RED);
                 wolf.isWet = true;
                 //TODO: test on servers
                 //wolf.level.broadcastEntityEvent(wolf, (byte)8);

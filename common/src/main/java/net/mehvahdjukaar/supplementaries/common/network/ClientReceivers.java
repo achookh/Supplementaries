@@ -418,16 +418,11 @@ public class ClientReceivers {
             Vec3 knockback = packet.knockback();
             switch (packet.explosionType()) {
                 case BOMB -> {
-                    Explosion explosion = new BombExplosion(l, null, pos.x, pos.y, pos.z, power, toBlow,
-                            BombEntity.BombType.values()[packet.getId()]);
-                    explosion.finalizeExplosion(true);
                     if (knockback != null) {
                         withPlayerDo(p -> p.setDeltaMovement(p.getDeltaMovement().add(knockback.x, knockback.y, knockback.z)));
                     }
                 }
                 case CANNONBALL -> {
-                    Explosion explosion = new CannonBallExplosion(l, null, pos.x, pos.y, pos.z, power, toBlow);
-                    explosion.finalizeExplosion(true);
                     if (l.getEntity(packet.getId()) instanceof CannonBallEntity le && knockback != null) {
                         le.setDeltaMovement(knockback);
                     }

@@ -41,44 +41,42 @@ class XPBottlingBehavior implements ItemUseOnBlockBehavior {
 
         BlockPos pos = hit.getBlockPos();
         Item i = stack.getItem();
-        if (CommonConfigs.xpBottlingOverride.test(world.getBlockState(pos).getBlock())) {
-            ItemStack returnStack = null;
+        ItemStack returnStack = null;
 
-            //prevent accidentally releasing bottles
-            if (i == Items.EXPERIENCE_BOTTLE) {
-                return InteractionResult.FAIL;
+        //prevent accidentally releasing bottles
+        if (i == Items.EXPERIENCE_BOTTLE) {
+            return InteractionResult.FAIL;
+        }
+
+        if (player.experienceLevel > 0 || player.isCreative()) {
+            if (i == Items.GLASS_BOTTLE) {
+                returnStack = new ItemStack(Items.EXPERIENCE_BOTTLE);
+            } else if (i instanceof JarItem) {
+                dummyTile.clearAllContents();
+                BlockUtil.loadTileFromItem(dummyTile, stack);
+
+                if (dummyTile.canInteractWithSoftFluidTank()) {
+                    ItemStack tempStack = new ItemStack(Items.EXPERIENCE_BOTTLE);
+                    ItemStack temp = dummyTile.fluidHolder.interactWithItem(tempStack, null, null, false);
+                    if (temp != null && temp.getItem() == Items.GLASS_BOTTLE) {
+                        returnStack = BlockUtil.saveTileToItem(dummyTile);
+                    }
+                }
             }
 
-            if (player.experienceLevel > 0 || player.isCreative()) {
-                if (i == Items.GLASS_BOTTLE) {
-                    returnStack = new ItemStack(Items.EXPERIENCE_BOTTLE);
-                } else if (i instanceof JarItem) {
-                    dummyTile.clearAllContents();
-                    BlockUtil.loadTileFromItem(dummyTile, stack);
+            if (returnStack != null) {
+                player.hurt(ModDamageSources.bottling(), CommonConfigs.Tweaks.BOTTLING_COST.get());
+                Utils.swapItem(player, hand, returnStack);
 
-                    if (dummyTile.canInteractWithSoftFluidTank()) {
-                        ItemStack tempStack = new ItemStack(Items.EXPERIENCE_BOTTLE);
-                        ItemStack temp = dummyTile.fluidHolder.interactWithItem(tempStack, null, null, false);
-                        if (temp != null && temp.getItem() == Items.GLASS_BOTTLE) {
-                            returnStack = BlockUtil.saveTileToItem(dummyTile);
-                        }
-                    }
+                if (!player.isCreative())
+                    player.giveExperiencePoints(-Utils.getXPinaBottle(1, world.random) - 3);
+
+                if (world.isClientSide) {
+                    Minecraft.getInstance().particleEngine.createTrackingEmitter(player, ModParticles.BOTTLING_XP_PARTICLE.get(), 1);
                 }
+                world.playSound(null, player.blockPosition(), SoundEvents.BOTTLE_FILL_DRAGONBREATH, SoundSource.BLOCKS, 1, 1);
 
-                if (returnStack != null) {
-                    player.hurt(ModDamageSources.bottling(), CommonConfigs.Tweaks.BOTTLING_COST.get());
-                    Utils.swapItem(player, hand, returnStack);
-
-                    if (!player.isCreative())
-                        player.giveExperiencePoints(-Utils.getXPinaBottle(1, world.random) - 3);
-
-                    if (world.isClientSide) {
-                        Minecraft.getInstance().particleEngine.createTrackingEmitter(player, ModParticles.BOTTLING_XP_PARTICLE.get(), 1);
-                    }
-                    world.playSound(null, player.blockPosition(), SoundEvents.BOTTLE_FILL_DRAGONBREATH, SoundSource.BLOCKS, 1, 1);
-
-                    return InteractionResult.sidedSuccess(world.isClientSide);
-                }
+                return InteractionResult.sidedSuccess(world.isClientSide);
             }
         }
         return InteractionResult.PASS;

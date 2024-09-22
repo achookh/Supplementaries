@@ -17,7 +17,6 @@ import net.mehvahdjukaar.supplementaries.common.entities.goals.EatFodderGoal;
 import net.mehvahdjukaar.supplementaries.common.entities.goals.EvokerRedMerchantWololooSpellGoal;
 import net.mehvahdjukaar.supplementaries.common.events.overrides.InteractEventsHandler;
 import net.mehvahdjukaar.supplementaries.common.items.*;
-import net.mehvahdjukaar.supplementaries.common.items.crafting.WeatheredMapRecipe;
 import net.mehvahdjukaar.supplementaries.common.misc.map_data.ColoredMapHandler;
 import net.mehvahdjukaar.supplementaries.common.misc.map_data.MapLightHandler;
 import net.mehvahdjukaar.supplementaries.common.misc.globe.GlobeData;
@@ -139,7 +138,6 @@ public class ServerEvents {
         if (PlatHelper.getPhysicalSide().isClient()) {
             CapturedMobCache.clear();
         } else {
-            WeatheredMapRecipe.onWorldUnload();
             WaySignStructure.clearCache();
             EndermanSkullBlockTile.clearCache();
             ColoredMapHandler.clearIdCache();

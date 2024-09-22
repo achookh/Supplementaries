@@ -44,21 +44,6 @@ public class SignPostBlock extends FenceMimicBlock implements EntityBlock, IRota
         return RenderShape.MODEL;
     }
 
-    @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand handIn,
-                                 BlockHitResult hit) {
-        ItemStack itemstack = player.getItemInHand(handIn);
-        if(itemstack.getItem() instanceof SignPostItem) return InteractionResult.PASS;
-        if (level instanceof ServerLevel serverLevel) {
-            if (level.getBlockEntity(pos) instanceof SignPostBlockTile tile && tile.isAccessibleBy(player)) {
-                return tile.handleInteraction(state, serverLevel, pos, player, handIn, hit, itemstack);
-            }
-            return InteractionResult.PASS;
-        } else {
-            return InteractionResult.SUCCESS;
-        }
-    }
-
     @ForgeOverride
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
         if (world.getBlockEntity(pos) instanceof SignPostBlockTile tile) {

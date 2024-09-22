@@ -32,15 +32,4 @@ public class OverencumberedEffect extends MobEffect {
     public void applyInstantenousEffect(@Nullable Entity pSource, @Nullable Entity pIndirectSource, LivingEntity pLivingEntity, int pAmplifier, double pHealth) {
     }
 
-    @Override
-    public void addAttributeModifiers(LivingEntity pLivingEntity, AttributeMap pAttributeMap, int pAmplifier) {
-        if (pAmplifier > 1) {
-            super.addAttributeModifiers(pLivingEntity, pAttributeMap, pAmplifier - 2);
-        }
-    }
-
-    @Override
-    public void removeAttributeModifiers(LivingEntity pLivingEntity, AttributeMap pAttributeMap, int pAmplifier) {
-        super.removeAttributeModifiers(pLivingEntity, pAttributeMap, pAmplifier - 2);
-    }
 }

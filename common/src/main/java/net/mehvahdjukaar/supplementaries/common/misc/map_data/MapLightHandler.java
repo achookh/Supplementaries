@@ -179,6 +179,7 @@ public class MapLightHandler {
 
         @Override
         public Patch createUpdatePatch(Counter counter) {
+            if (data == null) return new Patch(0, 0, 0, new Int2ObjectArrayMap<>());
             int minX = counter.minDirtyX;
             int maxX = counter.maxDirtyX;
             int minZ = counter.minDirtyZ;
@@ -272,7 +273,8 @@ public class MapLightHandler {
                 int maxX = buf.readInt();
                 int minZ = buf.readInt();
                 int size = buf.readVarInt();
-                Int2ObjectArrayMap<byte[]> positions = new Int2ObjectArrayMap<>(size);;
+                Int2ObjectArrayMap<byte[]> positions = new Int2ObjectArrayMap<>(size);
+                ;
                 for (int i = 0; i < size; i++) {
                     int x = buf.readVarInt();
                     byte[] rowData = buf.readByteArray();

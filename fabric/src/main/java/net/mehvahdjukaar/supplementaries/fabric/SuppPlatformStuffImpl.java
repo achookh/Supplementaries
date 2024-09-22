@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.supplementaries.fabric;
 
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
-import net.mehvahdjukaar.moonlight.api.platform.configs.fabric.FabricConfigSpec;
 import net.mehvahdjukaar.moonlight.api.platform.configs.fabric.values.BoolConfigValue;
 import net.mehvahdjukaar.supplementaries.common.utils.SlotReference;
 import net.mehvahdjukaar.supplementaries.configs.ClientConfigs;
@@ -54,9 +53,7 @@ public class SuppPlatformStuffImpl {
     }
 
     public static boolean isEndermanMask(EnderMan enderman, Player player, ItemStack itemstack) {
-        return itemstack.getItem() == Blocks.CARVED_PUMPKIN.asItem() ||
-                EnchantmentHelper.getEnchantments(itemstack)
-                        .containsKey(CompatObjects.END_VEIL.get());
+        return false;
     }
 
     public static int getItemLifeSpawn(ItemEntity itemEntity) {
@@ -76,12 +73,10 @@ public class SuppPlatformStuffImpl {
 
     public static void disableAMWarn() {
         ((BoolConfigValue) ClientConfigs.General.NO_AMENDMENTS_WARN).set(true);
-        ((FabricConfigSpec) ClientConfigs.CONFIG_HOLDER).saveConfig();
     }
 
     public static void disableOFWarn(boolean on) {
         ((BoolConfigValue) ClientConfigs.General.NO_OPTIFINE_WARN).set(on);
-        ((FabricConfigSpec) ClientConfigs.CONFIG_HOLDER).saveConfig();
     }
 
     public static boolean canStickTo(BlockState movedState, BlockState maybeSticky) {

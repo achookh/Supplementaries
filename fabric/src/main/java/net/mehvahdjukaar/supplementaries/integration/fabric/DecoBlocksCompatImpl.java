@@ -33,66 +33,13 @@ import java.util.function.Supplier;
 
 public class DecoBlocksCompatImpl {
 
-    public static final Supplier<Block> CHANDELIER_ROPE;
-    public static final Supplier<Block> SOUL_CHANDELIER_ROPE;
-    public static final Supplier<Block> ENDER_CHANDELIER_ROPE;
-    public static final Supplier<Block> GLOW_CHANDELIER_ROPE;
-
-    static {
-        CHANDELIER_ROPE = RegHelper.registerBlock(Supplementaries.res("rope_chandelier"), () ->
-                new RopeChandelierBlock(BlockBehaviour.Properties.of()
-                        .mapColor(MapColor.WOOD)
-                        .strength(0.3F)
-                        .sound(SoundType.WOOD)
-                        .noOcclusion()
-                        .lightLevel((state) -> 15), CompatObjects.CHANDELIER, () -> ParticleTypes.FLAME));
-
-        SOUL_CHANDELIER_ROPE = RegHelper.registerBlock(Supplementaries.res("rope_soul_chandelier"), () ->
-                new RopeChandelierBlock(BlockBehaviour.Properties.of()
-                        .mapColor(MapColor.WOOD)
-                        .strength(0.3F)
-                        .sound(SoundType.WOOD)
-                        .noOcclusion()
-                        .lightLevel((state) -> 11), CompatObjects.SOUL_CHANDELIER, () -> ParticleTypes.SOUL_FIRE_FLAME));
-
-        if (CompatHandler.DECO_BLOCKS_ABNORMALS) {
-            ENDER_CHANDELIER_ROPE = RegHelper.registerBlock(Supplementaries.res("rope_ender_chandelier"), () ->
-                    new RopeChandelierBlock(BlockBehaviour.Properties.of()
-                            .mapColor(MapColor.WOOD)
-                            .strength(0.3F)
-                            .sound(SoundType.WOOD)
-                            .noOcclusion()
-                            .lightLevel((state) -> 15), CompatObjects.ENDER_CHANDELIER,
-                            CompatObjects.ENDER_FLAME));
-        } else ENDER_CHANDELIER_ROPE = null;
-
-        if (CompatHandler.MUCH_MORE_MOD_COMPAT) {
-            GLOW_CHANDELIER_ROPE = RegHelper.registerBlock(Supplementaries.res("rope_glow_chandelier"), () ->
-                    new RopeChandelierBlock(BlockBehaviour.Properties.of()
-                            .mapColor(MapColor.WOOD)
-                            .strength(0.3F)
-                            .sound(SoundType.WOOD)
-                            .noOcclusion()
-                            .lightLevel((state) -> 15), CompatObjects.GLOW_CHANDELIER,
-                            CompatObjects.GLOW_FLAME));
-        } else GLOW_CHANDELIER_ROPE = null;
-    }
 
     public static boolean isPalisade(BlockState state) {
         return state.getBlock() instanceof PalisadeBlock;
     }
 
     public static void tryConvertingRopeChandelier(BlockState facingState, LevelAccessor world, BlockPos facingPos) {
-        Block b = facingState.getBlock();
-        if (b == CompatObjects.CHANDELIER.get()) {
-            world.setBlock(facingPos, CHANDELIER_ROPE.get().defaultBlockState(), 3);
-        } else if (b == CompatObjects.SOUL_CHANDELIER.get()) {
-            world.setBlock(facingPos, SOUL_CHANDELIER_ROPE.get().defaultBlockState(), 3);
-        } else if (b == CompatObjects.ENDER_CHANDELIER.get()) {
-            world.setBlock(facingPos, ENDER_CHANDELIER_ROPE.get().defaultBlockState(), 3);
-        } else if (b == CompatObjects.GLOW_CHANDELIER.get()) {
-            world.setBlock(facingPos, GLOW_CHANDELIER_ROPE.get().defaultBlockState(), 3);
-        }
+
     }
 
     public static void init() {
@@ -122,15 +69,6 @@ public class DecoBlocksCompatImpl {
             return mimic.get().getName();
         }
 
-        @Override
-        public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
-            return mimic.get().getCloneItemStack(level, pos, defMimic.get());
-        }
-
-        @Override
-        public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-            return mimic.get().getDrops(defMimic.get(), builder);
-        }
 
         @Override
         public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
@@ -163,17 +101,5 @@ public class DecoBlocksCompatImpl {
 
 
     public static void setupClient() {
-        if (DecoBlocksCompatImpl.CHANDELIER_ROPE != null)
-            ClientHelper.registerRenderType(DecoBlocksCompatImpl.CHANDELIER_ROPE.get(), RenderType.cutout());
-        if (DecoBlocksCompatImpl.SOUL_CHANDELIER_ROPE != null)
-            ClientHelper.registerRenderType(DecoBlocksCompatImpl.SOUL_CHANDELIER_ROPE.get(), RenderType.cutout());
-        if (CompatHandler.DECO_BLOCKS_ABNORMALS) {
-            if (DecoBlocksCompatImpl.ENDER_CHANDELIER_ROPE != null)
-                ClientHelper.registerRenderType(DecoBlocksCompatImpl.ENDER_CHANDELIER_ROPE.get(), RenderType.cutout());
-        }
-        if (CompatHandler.MUCH_MORE_MOD_COMPAT) {
-            if (DecoBlocksCompatImpl.GLOW_CHANDELIER_ROPE != null)
-                ClientHelper.registerRenderType(DecoBlocksCompatImpl.GLOW_CHANDELIER_ROPE.get(), RenderType.cutout());
-        }
     }
 }

@@ -75,7 +75,6 @@ public class HatStandEntity extends LivingEntity {
     public HatStandEntity(EntityType<? extends HatStandEntity> entityType, Level level) {
         super(entityType, level);
         this.headPose = DEFAULT_HEAD_POSE;
-        this.setMaxUpStep(0.0F);
         if (PlatHelper.getPhysicalSide().isClient()) {
             swingAnimation = new PendulumAnimation(
                     ClientConfigs.Blocks.HAT_STAND_CONFIG, this::getRotationAxis);
@@ -136,17 +135,11 @@ public class HatStandEntity extends LivingEntity {
     }
 
     @Override
-    public boolean canTakeItem(ItemStack stack) {
-        EquipmentSlot equipmentSlot = Mob.getEquipmentSlotForItem(stack);
-        return this.getItemBySlot(equipmentSlot).isEmpty();
-    }
-
-    @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         ItemStack stack = this.helmet.get(0);
         if (!stack.isEmpty())
-            compound.put("Helmet", stack.save(new CompoundTag()));
+            compound.put("Helmet", stack.save(level().registryAccess(), new CompoundTag()));
         compound.putBoolean("Invisible", this.isInvisible());
         compound.putBoolean("NoBasePlate", this.isNoBasePlate());
         compound.putBoolean("DisabledSlots", this.slotsDisabled);
@@ -254,16 +247,6 @@ public class HatStandEntity extends LivingEntity {
                             return InteractionResult.SUCCESS;
                         }
                     } else {
-                        EquipmentSlot equipmentSlot = Mob.getEquipmentSlotForItem(itemStack);
-                        if (CommonConfigs.Building.HAT_STAND_UNRESTRICTED.get()) {
-                            equipmentSlot = EquipmentSlot.HEAD;
-                        }
-                        if (equipmentSlot != EquipmentSlot.HEAD) {
-                            return InteractionResult.FAIL;
-                        }
-                        if (this.swapItem(player, equipmentSlot, itemStack, hand)) {
-                            return InteractionResult.SUCCESS;
-                        }
                     }
                 }
                 return InteractionResult.PASS;
@@ -309,7 +292,6 @@ public class HatStandEntity extends LivingEntity {
                     if (this.isOnFire()) {
                         this.causeDamage(source, 0.15F);
                     } else {
-                        this.setSecondsOnFire(5);
                     }
 
                     return false;
@@ -402,11 +384,6 @@ public class HatStandEntity extends LivingEntity {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
-        return dimensions.height * (this.isBaby() ? 0.5F : 0.7F);
-    }
-
-    @Override
     public void setYBodyRot(float pOffset) {
         float r = this.getYRot();
         this.yRotO = r;
@@ -462,19 +439,12 @@ public class HatStandEntity extends LivingEntity {
 
     public void dismantle(@Nullable DamageSource source) {
 
-        if (source != null) this.dropAllDeathLoot(source);
 
         this.showBreakingParticles();
         this.playBrokenSound();
 
         this.remove(Entity.RemovalReason.KILLED);
         this.gameEvent(GameEvent.ENTITY_DIE);
-    }
-
-    @Override
-    protected void dropAllDeathLoot(DamageSource damageSource) {
-        super.dropAllDeathLoot(damageSource);
-        this.spawnAtLocation(this.getPickResult(), 1);
     }
 
     @Override
@@ -495,11 +465,6 @@ public class HatStandEntity extends LivingEntity {
     @Override
     public void kill() {
         dismantle(level().damageSources().generic());
-    }
-
-    @Override
-    public boolean ignoreExplosion() {
-        return this.isInvisible();
     }
 
     public void setHeadPose(Rotations headPose) {
@@ -578,7 +543,6 @@ public class HatStandEntity extends LivingEntity {
     public ItemStack getPickResult() {
         ItemStack itemStack = new ItemStack(ModRegistry.HAT_STAND.get());
         if (this.hasCustomName()) {
-            itemStack.setHoverName(this.getCustomName());
         }
         return itemStack;
     }
@@ -589,14 +553,6 @@ public class HatStandEntity extends LivingEntity {
     }
 
     private void setSkibidiIfInCauldron(@Nullable LivingEntity target) {
-        BlockState state = this.getFeetBlockState();
-        Block block = state.getBlock();
-        if (block instanceof AbstractCauldronBlock || block instanceof ComposterBlock) {
-            //skibidi tall
-            setSkibidi(true, true, target);
-        } else if (block instanceof HopperBlock) {
-            setSkibidi(true, false, target);
-        }
     }
 
     public void setSkibidi(boolean skibidi, boolean tall, @Nullable LivingEntity playerTarget) {

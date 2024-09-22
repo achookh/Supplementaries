@@ -22,15 +22,4 @@ public abstract class BookViewScreenMixin {
     @Shadow private PageButton forwardButton;
 
     @Shadow private PageButton backButton;
-
-    @ModifyArg(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"))
-    public ResourceLocation setTatteredBookTexture(ResourceLocation resourceLocation) {
-        if (this.bookAccess instanceof IAntiquable wb && wb.isAntique()) {
-            ((IAntiquable) this.forwardButton).setAntique(true);
-            ((IAntiquable) this.backButton).setAntique(true);
-            return ModTextures.TATTERED_BOOK_GUI_TEXTURE;
-        }
-        return resourceLocation;
-    }
 }

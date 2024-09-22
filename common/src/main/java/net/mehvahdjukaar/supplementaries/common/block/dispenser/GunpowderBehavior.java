@@ -25,9 +25,6 @@ class GunpowderBehavior extends AdditionalDispenserBehavior {
         Direction direction = source.state().getValue(DispenserBlock.FACING);
         BlockPos blockpos = source.pos().relative(direction);
         Direction direction1 = source.level().isEmptyBlock(blockpos.below()) ? direction : Direction.UP;
-        InteractionResult result = ItemsUtil.place(new DirectionalPlaceContext(source.level(), blockpos, direction, stack, direction1),
-                ModRegistry.GUNPOWDER_BLOCK.get());
-        if (result.consumesAction()) return InteractionResultHolder.success(stack);
 
         return InteractionResultHolder.fail(stack);
     }

@@ -86,7 +86,6 @@ public class FrameBlockTile extends MimicBlockTile {
     public ItemInteractionResult interactWithPlayer(Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult trace,
                                                     ItemStack stack, boolean canStrip) {
         Item item = stack.getItem();
-        if (Utils.mayBuild(player,pos) && !trace.isInside()) {
             if (item instanceof BlockItem blockItem && this.getHeldBlock().isAir()) {
                 BlockPlaceContext context = new SelfPlacementContext(player, hand, stack, trace);
                 if(context.getClickedPos().equals(pos)) {
@@ -114,11 +113,9 @@ public class FrameBlockTile extends MimicBlockTile {
                 }
                 level.playSound(player, pos, this.getBlockState().getSoundType().getBreakSound(),
                         SoundSource.BLOCKS, 1, 1);
-                stack.hurtAndBreak(1, player, (l) -> l.broadcastBreakEvent(hand));
                 level.setBlockAndUpdate(pos, held);
                 return ItemInteractionResult.sidedSuccess(level.isClientSide);
             }
-        }
         //don't try filling with other hand
         return ItemInteractionResult.FAIL;
     }

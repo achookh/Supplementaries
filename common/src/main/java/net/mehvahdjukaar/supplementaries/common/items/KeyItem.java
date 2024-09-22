@@ -25,16 +25,6 @@ public class KeyItem extends Item {
         super(properties);
     }
 
-    @ForgeOverride
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return enchantment == Enchantments.VANISHING_CURSE;
-    }
-
-    @ForgeOverride
-    public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-        var l = EnchantedBookItem.getEnchantments(book);
-        return l.size() == 1 && l.get(0) == Enchantments.VANISHING_CURSE;
-    }
 
     @ForgeOverride
     public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) {
@@ -53,7 +43,6 @@ public class KeyItem extends Item {
                     return InteractionResult.sidedSuccess(level.isClientSide);
                 }
             } else if (tile instanceof SafeBlockTile) {
-                return level.getBlockState(pos).use(level, context.getPlayer(), context.getHand(), new BlockHitResult(Vec3.atCenterOf(pos), Direction.UP, pos, false));
             }
         }
         return super.useOn(context);

@@ -66,7 +66,7 @@ public class ThrowableBrickEntity extends ImprovedProjectileEntity {
 
 
     private ParticleOptions makeParticle() {
-        ItemStack itemstack = this.getItemRaw();
+        ItemStack itemstack = ItemStack.EMPTY;
         return itemstack.isEmpty() ? new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(this.getDefaultItem())) : new ItemParticleOption(ParticleTypes.ITEM, itemstack);
     }
 
@@ -92,12 +92,6 @@ public class ThrowableBrickEntity extends ImprovedProjectileEntity {
 
             if (entity instanceof Player player) {
                 if (CompatHandler.FLAN && !FlanCompat.canBreak(player, pos)) return;
-                if (!Utils.mayBuild(player, pos)) {
-                    if (!this.getItem().hasAdventureModeBreakTagForBlock(level.registryAccess().registryOrThrow(Registries.BLOCK),
-                            new BlockInWorld(level, pos, false))) {
-                        return;
-                    }
-                }
             }
             if (!(entity instanceof Mob) || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) || PlatHelper.isMobGriefingOn(level, this)) {
                 var p = FakePlayerManager.get(BRICK_PLAYER, level);
@@ -162,7 +156,7 @@ public class ThrowableBrickEntity extends ImprovedProjectileEntity {
     }
 
     @Override
-    protected float getGravity() {
+    protected double getDefaultGravity() {
         return ProjectileStats.BRICKS_GRAVITY;
     }
 }

@@ -95,7 +95,6 @@ public class PickleModel<T extends LivingEntity> extends PlayerModel<T> {
         } else {
             float f1 = player.getFallFlyingTicks();
             if (f1 > 0.01) {
-                f1 += Minecraft.getInstance().getFrameTime();
                 float inclination = Mth.clamp(f1 * f1 / 100.0F, 0.0F, 1.0F);
                 leftArm.xRot = inclination * (float) Math.PI;
                 rightArm.xRot = inclination * (float) Math.PI;

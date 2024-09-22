@@ -75,12 +75,6 @@ public class GunpowderExplosion extends Explosion {
         BlockPos pos = new BlockPos(px, py, pz);
         BlockState newFire = BaseFireBlock.getState(this.level, pos);
         BlockState s = level.getBlockState(pos);
-        if (s.canBeReplaced() || s.is(ModRegistry.GUNPOWDER_BLOCK.get())) { //TODO: change this reg value
-            if (this.hasFlammableNeighbours(pos) || PlatHelper.isFireSource(this.level.getBlockState(pos.below()), level, pos, Direction.UP)
-                    || newFire.getBlock() != Blocks.FIRE) {
-                this.level.setBlockAndUpdate(pos, newFire);
-            }
-        }
 
     }
 
@@ -114,7 +108,6 @@ public class GunpowderExplosion extends Explosion {
             }
             //lights up burnable blocks
             if (block instanceof ILightable iLightable) {
-                iLightable.lightUp(null, state, pos, this.level, ILightable.FireSoundType.FLAMING_ARROW);
             } else if (canLight(state)) {
                 level.setBlock(pos, state.setValue(BlockStateProperties.LIT, Boolean.TRUE), 11);
                 ILightable.FireSoundType.FLAMING_ARROW.play(level, pos);
@@ -159,7 +152,6 @@ public class GunpowderExplosion extends Explosion {
 
                 builder.withParameter(LootContextParams.EXPLOSION_RADIUS, this.radius2);
 
-                blockstate.getDrops(builder).forEach((d) -> addBlockDrops(drops, d, immutable));
             }
 
             ForgeHelper.onBlockExploded(blockstate, this.level, blockpos, this);
@@ -182,13 +174,8 @@ public class GunpowderExplosion extends Explosion {
 
     // specifically for alex caves nukes basically
     public static void igniteTntHack(Level level, BlockPos blockpos, Block tnt) {
-        Arrow dummyArrow = new Arrow(level, blockpos.getX() + 0.5, blockpos.getY() + 0.5, blockpos.getZ() + 0.5);
-        dummyArrow.setSecondsOnFire(20);
         BlockState old = level.getBlockState(blockpos);
         //this will remove block above. too bad we are about to explode it anyways
-        tnt.onProjectileHit(level, tnt.defaultBlockState(),
-                new BlockHitResult(new Vec3(0.5, 0.5, 0.5), Direction.UP, blockpos, true),
-                dummyArrow);
         //restore old block
         level.setBlockAndUpdate(blockpos, old);
     }

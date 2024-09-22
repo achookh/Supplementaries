@@ -83,7 +83,6 @@ public class SlingshotProjectileEntity extends ImprovedProjectileEntity implemen
         this.setItem(item);
 
         this.setLoyalty(getLoyaltyFromItem(item));
-        this.setNoGravity(EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.STASIS_ENCHANTMENT.get(), throwerStack) != 0);
 
         this.yRotInc = (this.random.nextBoolean() ? 1 : -1) * (float) (4 * this.random.nextGaussian() + 7);
         this.xRotInc = (this.random.nextBoolean() ? 1 : -1) * (float) (4 * this.random.nextGaussian() + 7);
@@ -250,10 +249,6 @@ public class SlingshotProjectileEntity extends ImprovedProjectileEntity implemen
                 p.setItem(this.getItem());
                 ent = p;
             } else if (item == Items.FIRE_CHARGE) {
-                var p = new SmallFireball(level, le, this.getX(), this.getY(), this.getZ());
-                p.setPos(this.getX(), this.getY(), this.getZ());
-                p.setItem(this.getItem());
-                ent = p;
             } else if (item instanceof SnowballItem) {
                 var s = new Snowball(level, le);
                 s.setPos(this.getX(), this.getY(), this.getZ());

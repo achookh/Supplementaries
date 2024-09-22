@@ -122,7 +122,6 @@ public abstract class SelectableContainerItemHud {
             NetworkHelper.sendToServer(new ServerBoundCycleSelectableContainerItemPacket(slotsMoved, slot, itemUsed));
             //update client immediately. stacks now may be desynced
 
-            data.cycle(slotsMoved);
         }
     }
 
@@ -131,7 +130,6 @@ public abstract class SelectableContainerItemHud {
         if (data != null) {
             NetworkHelper.sendToServer(new ServerBoundCycleSelectableContainerItemPacket(
                     number, slot, true, itemUsed));
-            getItemUsedData().setSelectedSlot(number);
         }
     }
 
@@ -155,9 +153,6 @@ public abstract class SelectableContainerItemHud {
         }
         int number = key - 48;
         if (number >= 1 && number <= 9) {
-            if (number <= itemUsed.getMaxSlots()) {
-                sendSetSlot(slot, number - 1);
-            }
             //cancels all number keys to prevent switching items
             return true;
         }

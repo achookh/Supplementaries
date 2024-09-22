@@ -12,7 +12,6 @@ import net.mehvahdjukaar.supplementaries.common.entities.BombEntity;
 import net.mehvahdjukaar.supplementaries.common.items.*;
 import net.mehvahdjukaar.supplementaries.common.items.loot.RandomArrowFunction;
 import net.mehvahdjukaar.supplementaries.common.items.loot.RandomEnchantFunction;
-import net.mehvahdjukaar.supplementaries.common.misc.StasisEnchantment;
 import net.mehvahdjukaar.supplementaries.common.misc.effects.FlammableEffect;
 import net.mehvahdjukaar.supplementaries.common.misc.effects.OverencumberedEffect;
 import net.mehvahdjukaar.supplementaries.configs.CommonConfigs;
@@ -67,8 +66,6 @@ public class ModRegistry {
             () -> new LootItemFunctionType<>(RandomArrowFunction.CODEC), Registries.LOOT_FUNCTION_TYPE);
 
     //enchantment
-    public static final Supplier<Enchantment> STASIS_ENCHANTMENT = RegHelper.registerAsync(
-            res(STASIS_NAME), StasisEnchantment::new, Registries.ENCHANTMENT);
 
     //effects
     public static final RegSupplier<MobEffect> OVERENCUMBERED = RegHelper.registerEffect(
@@ -734,7 +731,7 @@ public class ModRegistry {
     //pancakes
     public static final Supplier<Item> PANCAKE_ITEM = regItem(PANCAKE_NAME, () -> new PancakeItem(new Item.Properties()
             .component(DataComponents.JUKEBOX_PLAYABLE, new JukeboxPlayable(
-                    new EitherHolder<>(ModSounds.PANCAKE_MUSIC_JUKEBOX.getKey()), false))));
+                    new EitherHolder<>(JukeboxSongs.CHIRP), false))));
 
     // cant be block item so we use extra placement stuff later
     public static final Supplier<Block> PANCAKE = regBlock(PANCAKE_NAME, () -> new PancakeBlock(
@@ -746,7 +743,7 @@ public class ModRegistry {
 
     public static final Supplier<Item> AVAST_DISC = regItem(AVAST_DISC_NAME, () -> new Item(new Item.Properties()
             .component(DataComponents.JUKEBOX_PLAYABLE, new JukeboxPlayable(
-                    new EitherHolder<>(ModSounds.AVAST_MUSIC_JUKEBOX.getKey()), true))
+                    new EitherHolder<>(JukeboxSongs.CHIRP), true))
             .stacksTo(1)
             .rarity(Rarity.RARE)));
 

@@ -11,13 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 
 public class SelectableContainerTooltip implements ClientTooltipComponent {
-    private final List<ItemStack> items;
-    private final int selectedSlot;
 
     public SelectableContainerTooltip(SelectableContainerContent<?> content) {
-        this.items = content.stacks();
-        //TODO: copy bundle one
-        this.selectedSlot = content.selected();
     }
 
     @Override
@@ -27,35 +22,14 @@ public class SelectableContainerTooltip implements ClientTooltipComponent {
 
     @Override
     public int getWidth(Font font) {
-        return this.gridSizeX() * 18 + 2;
+        return 3 * 18 + 2;
     }
 
     @Override
     public void renderImage(Font font, int mouseX, int mouseY, GuiGraphics graphics) {
-        int i = this.gridSizeX();
         int j = this.gridSizeY();
         int k = 0;
         for (int l = 0; l < j; ++l) {
-            for (int m = 0; m < i; ++m) {
-                int n = mouseX + m * 18 + 1;
-                int o = mouseY + l * 20 + 1;
-                this.renderSlot(n, o, k++, font, graphics);
-            }
-        }
-        this.drawBorder(mouseX, mouseY, i, j, graphics);
-    }
-
-    private void renderSlot(int x, int y, int itemIndex, Font font, GuiGraphics graphics) {
-        if (itemIndex >= this.items.size()) {
-            this.blit(graphics, x, y, Texture.SLOT);
-            return;
-        }
-        ItemStack itemStack = this.items.get(itemIndex);
-        this.blit(graphics, x, y, Texture.SLOT);
-        graphics.renderItem(itemStack, x + 1, y + 1, itemIndex);
-        graphics.renderItemDecorations(font, itemStack, x + 1, y + 1);
-        if (itemIndex == selectedSlot) {
-            AbstractContainerScreen.renderSlotHighlight(graphics, x + 1, y + 1, 0);
         }
     }
 
@@ -79,9 +53,6 @@ public class SelectableContainerTooltip implements ClientTooltipComponent {
         guiGraphics.blit(ModTextures.QUIVER_TOOLTIP, x, y, 0, texture.x, texture.y, texture.w, texture.h, 128, 128);
     }
 
-    private int gridSizeX() {
-        return this.items.size();
-    }
 
     private int gridSizeY() {
         return 1;

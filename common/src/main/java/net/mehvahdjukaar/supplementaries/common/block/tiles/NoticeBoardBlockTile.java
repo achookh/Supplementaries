@@ -25,6 +25,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -121,41 +122,6 @@ public class NoticeBoardBlockTile extends ItemDisplayTile implements Nameable, I
     public void updateText() {
         ItemStack itemstack = getDisplayedItem();
         Item item = itemstack.getItem();
-        CompoundTag com = itemstack.getTag();
-        if ((item instanceof WrittenBookItem && WrittenBookItem.makeSureTagIsValid(com)) ||
-                (item instanceof WritableBookItem && WritableBookItem.makeSureTagIsValid(com))) {
-
-            ListTag pages = com.getList("pages", 8).copy();
-            if (!pages.isEmpty()) {
-                if (this.pageNumber >= pages.size()) {
-                    this.pageNumber = this.pageNumber % pages.size();
-                }
-
-                this.text = pages.getString(this.pageNumber);
-            }
-
-        } else if (CompatHandler.COMPUTERCRAFT) {
-            if (CCCompat.isPrintedBook(item)) {
-
-                if (com != null) {
-                    int pages = CCCompat.getPages(itemstack);
-
-                    if (this.pageNumber >= pages) {
-                        this.pageNumber = this.pageNumber % pages;
-                    }
-                    String[] text = CCCompat.getText(itemstack);
-                    StringBuilder combined = new StringBuilder();
-                    for (int i = 0; i < 21; i++) {
-                        int ind = this.pageNumber * 21 + i;
-                        if (ind < text.length) {
-                            combined.append(text[ind]);
-                            combined.append(" ");
-                        }
-                    }
-                    this.text = combined.toString();
-                }
-            }
-        }
     }
 
     @Override
@@ -169,7 +135,7 @@ public class NoticeBoardBlockTile extends ItemDisplayTile implements Nameable, I
     public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("PageNumber", this.pageNumber);
-        this.textHolder.save(tag);
+        this.textHolder.save(tag, registries);
     }
 
     @Override
@@ -256,7 +222,7 @@ public class NoticeBoardBlockTile extends ItemDisplayTile implements Nameable, I
         this.setChanged();
     }
 
-    public InteractionResult interact(Player player, InteractionHand handIn, ItemStack stack, BlockPos pos, BlockState state, BlockHitResult hit) {
+    public ItemInteractionResult interact(Player player, InteractionHand handIn, ItemStack stack, BlockPos pos, BlockState state, BlockHitResult hit) {
         Level level = player.level();
 
         if (player.isShiftKeyDown() && !this.isEmpty() && player.getItemInHand(handIn).isEmpty()) {
@@ -266,27 +232,20 @@ public class NoticeBoardBlockTile extends ItemDisplayTile implements Nameable, I
             drop.setDefaultPickUpDelay();
             level.addFreshEntity(drop);
             this.setChanged();
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
 
         //try place or open
         if (hit.getDirection() == state.getValue(NoticeBoardBlock.FACING)) {
-            InteractionResult res = super.interactWithPlayerItem(player, handIn, stack);
-            if (res.consumesAction()) {
-                return res;
-            }
         }
-        InteractionResult r = this.textHolderInteract(0, level, pos, state, player, handIn);
-        if (r != InteractionResult.PASS) return r;
-
 
         if (!CommonConfigs.Building.NOTICE_BOARD_GUI.get()) {
-            return InteractionResult.PASS;
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         if (!level.isClientSide) {
             this.tryOpeningEditGui((ServerPlayer) player, pos, player.getItemInHand(handIn));
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override

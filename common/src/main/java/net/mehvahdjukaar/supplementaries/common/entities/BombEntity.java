@@ -297,21 +297,6 @@ public class BombEntity extends ImprovedProjectileEntity implements IExtraClient
             this.level().explode(this, this.getX(), this.getY(), this.getZ(), 6f, breaks, this.getOwner() instanceof Player ? Level.ExplosionInteraction.TNT : Level.ExplosionInteraction.MOB);
         }
 
-        BombExplosion explosion = new BombExplosion(this.level(), this,
-                this.getX(), this.getY() + 0.25, this.getZ(),
-                this.type, breaks ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.KEEP);
-
-        explosion.explode();
-        explosion.finalizeExplosion(true);
-
-        for (var p : level().players()) {
-            if (p.distanceToSqr(this) < 64 * 64) {
-                Message message = ClientBoundExplosionPacket.bomb(explosion, p);
-
-                NetworkHelper.sendToClientPlayer((ServerPlayer) p, message);
-            }
-        }
-
     }
 
     public enum BreakingMode {
@@ -341,7 +326,6 @@ public class BombEntity extends ImprovedProjectileEntity implements IExtraClient
             switch (this) {
                 case BLUE -> {
                     entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 20 * 30));
-                    entity.setSecondsOnFire(10);
                 }
                 case SPIKY -> {
                     //we are using the explosion method since it has a bigger radius
@@ -379,37 +363,6 @@ public class BombEntity extends ImprovedProjectileEntity implements IExtraClient
             }
         }
 
-        public void afterExploded(BombExplosion exp, Level level) {
-            if (this == SPIKY) {
-                Vec3 pos = exp.getDamageSource().getSourcePosition();
-                Entity e = exp.getIndirectSourceEntity();
-                if (e == null) return;
-                for (Entity entity : level.getEntities(e, new AABB(pos.x - 30, pos.y - 4, pos.z - 30,
-                        pos.x + 30, pos.y + 4, pos.z + 30))) {
-                    int random = (level.random.nextInt() * 100);
-                    boolean shouldPoison = false;
-                    if (entity.distanceToSqr(e) <= 4 * 4) {
-                        shouldPoison = true;
-                    } else if (entity.distanceToSqr(e) <= 8 * 8) {
-                        if (random < 60) shouldPoison = true;
-                    } else if (entity.distanceToSqr(e) <= 15 * 15) {
-                        if (random < 30) shouldPoison = true;
-                    } else if (entity.distanceToSqr(e) <= 30 * 30) {
-                        if (random < 5) shouldPoison = true;
-                    }
-                    if (shouldPoison) {
-                        if (entity instanceof LivingEntity livingEntity) {
-                            livingEntity.hurt(level.damageSources().magic(), 2);
-                            livingEntity.addEffect(new MobEffectInstance(MobEffects.POISON, (int) (260 * 0.5f)));
-                            var effect = CompatObjects.STUNNED_EFFECT.get();
-                            if (effect != null) {
-                                livingEntity.addEffect(new MobEffectInstance(effect, (int) (40 * 20 * 0.5f)));
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
 

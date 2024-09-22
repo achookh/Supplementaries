@@ -45,18 +45,6 @@ public class HatStandItem extends Item {
                     if (level instanceof ServerLevel serverLevel) {
                         level.removeBlock(blockpos, false);
                         Consumer<HatStandEntity> consumer = EntityType.createDefaultStackConfig(serverLevel, itemstack, context.getPlayer());
-                        HatStandEntity dummy = type.create(serverLevel, itemstack.getTag(), consumer, blockpos, MobSpawnType.SPAWN_EGG, false, false);
-                        if (dummy == null) {
-                            return InteractionResult.FAIL;
-                        }
-                        float rotation = Mth.floor((Mth.wrapDegrees(context.getRotation() - 180.0F) + 11.25) / 22.5F) * 22.5F;
-                        dummy.moveTo(vec3.x, vec3.y, vec3.z, rotation, 0.0F);
-                        dummy.setYHeadRot(rotation);
-
-                        level.addFreshEntity(dummy);
-                        level.playSound(null, dummy.getX(), dummy.getY(), dummy.getZ(), SoundEvents.ARMOR_STAND_PLACE,
-                                SoundSource.BLOCKS, 0.75F, 0.8F);
-                        dummy.gameEvent(GameEvent.ENTITY_PLACE, context.getPlayer());
                     }
                     itemstack.shrink(1);
                     return InteractionResult.SUCCESS;

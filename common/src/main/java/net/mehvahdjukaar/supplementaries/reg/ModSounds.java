@@ -102,11 +102,6 @@ public class ModSounds {
     public static final RegSupplier<SoundEvent> IMITATE_ENDERMAN = regSound("block.note_block.imitate.enderman");
 
 
-    public static final RegSupplier<JukeboxSong> PANCAKE_MUSIC_JUKEBOX = registerJukeboxSong("pancake",
-            PANCAKE_MUSIC, 3 * 60 + 48, 15);
-    public static final RegSupplier<JukeboxSong> AVAST_MUSIC_JUKEBOX = registerJukeboxSong("avast",
-            AVAST_MUSIC, 3 * 60, 7);
-
     public static final ModSoundType SLIDY_BLOCK = new ModSoundType(1.0F, 1.0F,
             SLIDY_BLOCK_BREAK,
             SLIDY_BLOCK_STEP,

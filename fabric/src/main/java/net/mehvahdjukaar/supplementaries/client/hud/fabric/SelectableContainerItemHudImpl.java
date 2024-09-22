@@ -25,10 +25,6 @@ public class SelectableContainerItemHudImpl extends SelectableContainerItemHud {
     @Override
     public void drawHighlight(GuiGraphics graphics, int screenWidth, int py, ItemStack selectedArrow) {
         int l;
-        MutableComponent mutablecomponent = Component.empty().append(selectedArrow.getHoverName()).withStyle(selectedArrow.getRarity().color);
-        if (selectedArrow.hasCustomHoverName()) {
-            mutablecomponent.withStyle(ChatFormatting.ITALIC);
-        }
         Component highlightTip = selectedArrow.getHoverName();
         int fontWidth = mc.font.width(highlightTip);
         int nx = (screenWidth - fontWidth) / 2;

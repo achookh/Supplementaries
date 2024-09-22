@@ -9,7 +9,6 @@ import net.mehvahdjukaar.supplementaries.common.block.blocks.CannonBlock;
 import net.mehvahdjukaar.supplementaries.common.block.blocks.TrappedPresentBlock;
 import net.mehvahdjukaar.supplementaries.common.block.tiles.CannonBlockTile;
 import net.mehvahdjukaar.supplementaries.common.block.tiles.TrappedPresentBlockTile;
-import net.mehvahdjukaar.supplementaries.common.entities.dispenser_minecart.MovingBlockSource;
 import net.mehvahdjukaar.supplementaries.common.network.ClientBoundParticlePacket;
 import net.mehvahdjukaar.supplementaries.common.network.ModNetwork;
 import net.mehvahdjukaar.supplementaries.reg.ModEntities;
@@ -166,18 +165,17 @@ public class PearlMarker extends Entity {
                     Direction direction = hitResult.getDirection();
                     BlockPos toPos = hitResult.getBlockPos().relative(direction);
                     if (level.getBlockState(toPos).canBeReplaced()) {
-                        CompoundTag nbt = blockEntity.saveWithoutMetadata();
+                        CompoundTag nbt = blockEntity.saveWithoutMetadata(level.registryAccess());
                         blockEntity.setRemoved();
 
                         BlockState newState = getLandingState(state, toPos, direction, level);
                         if (level.setBlockAndUpdate(fromPos, Blocks.AIR.defaultBlockState()) &&
                                 level.setBlockAndUpdate(toPos, newState)) {
                             // gets rid of triggered state of dispenser
-                            newState.neighborChanged(level, toPos, level.getBlockState(toPos.below()).getBlock(), toPos.below(), true);
 
                             BlockEntity dstEntity = level.getBlockEntity(toPos);
                             if (isValidBlockEntity(dstEntity)) {
-                                dstEntity.load(nbt);
+                                dstEntity.loadWithComponents(nbt, level.registryAccess());
                             }
                             SoundType type = state.getSoundType();
                             level.playSound(null, toPos, type.getPlaceSound(), SoundSource.BLOCKS, (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
@@ -214,11 +212,6 @@ public class PearlMarker extends Entity {
         return blockEntity instanceof CannonBlockTile || blockEntity instanceof DispenserBlockEntity || blockEntity instanceof TrappedPresentBlockTile;
     }
 
-    @Override
-    public void lerpTo(double pX, double pY, double pZ, float pYaw, float pPitch, int pPosRotationIncrements, boolean pTeleport) {
-        super.lerpTo(pX, pY, pZ, pYaw, pPitch, pPosRotationIncrements, pTeleport);
-        this.setPos(pX, pY, pZ);
-    }
 
     public static void onProjectileImpact(Projectile projectile, HitResult hitResult) {
         Level level = projectile.level();
@@ -232,13 +225,10 @@ public class PearlMarker extends Entity {
 
     public static ThrownEnderpearl createPearlToDispenseAndPlaceMarker(BlockSource source, Position pearlPos) {
         Level level = source.level();
-        BlockPos pos = source.getPos();
+        BlockPos pos = source.pos();
         ThrownEnderpearl pearl = new ThrownEnderpearl(EntityType.ENDER_PEARL, level);
         pearl.setPos(pearlPos.x(), pearlPos.y(), pearlPos.z());
 
-        if (source instanceof MovingBlockSource<?> movingBlockSource) {
-            pearl.setOwner(movingBlockSource.getMinecartEntity());
-        } else {
             var entity = level.getEntitiesOfClass(PearlMarker.class, new AABB(pos), (e) -> e.blockPosition().equals(pos)).stream().findAny();
             PearlMarker marker;
             if (entity.isEmpty()) {
@@ -251,7 +241,6 @@ public class PearlMarker extends Entity {
 
             marker.addPearl(pearl);
             pearl.setOwner(marker);
-        }
         pearl.addTag("dispensed");
         return pearl;
     }

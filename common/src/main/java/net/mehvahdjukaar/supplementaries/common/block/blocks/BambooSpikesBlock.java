@@ -115,7 +115,6 @@ public class BambooSpikesBlock extends WaterBlock implements ISoftFluidConsumer,
             PotionContents p = getPotion(stack);
             if (p != PotionContents.EMPTY && stack.isDamaged()) {
                 tile.tryApplyPotion(p);
-                tile.setMissingCharges(stack.getDamageValue());
             }
         }
     }
@@ -133,7 +132,6 @@ public class BambooSpikesBlock extends WaterBlock implements ISoftFluidConsumer,
     @Override
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         List<ItemStack> list = new ArrayList<>();
-        list.add(this.getSpikeItem(builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY)));
         return list;
     }
 
@@ -201,10 +199,6 @@ public class BambooSpikesBlock extends WaterBlock implements ISoftFluidConsumer,
         if (stack.getItem() instanceof LingeringPotionItem) {
             var potion = getPotion(stack).potion();
             if (potion.isPresent()) {
-                if (tryAddingPotion(state, level, pos, potion.get(), player)) {
-                    if (!player.isCreative())
-                        player.setItemInHand(hand, ItemUtils.createFilledResult(stack.copy(), player, new ItemStack(Items.GLASS_BOTTLE), false));
-                }
                 return ItemInteractionResult.sidedSuccess(level.isClientSide);
             }
         }
@@ -214,11 +208,6 @@ public class BambooSpikesBlock extends WaterBlock implements ISoftFluidConsumer,
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, WATERLOGGED, TIPPED);
-    }
-
-    @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
-        return this.getSpikeItem(level.getBlockEntity(pos));
     }
 
     @Nullable
@@ -241,10 +230,6 @@ public class BambooSpikesBlock extends WaterBlock implements ISoftFluidConsumer,
     @Override
     public boolean tryAcceptingFluid(Level world, BlockState state, BlockPos pos, SoftFluidStack fluid) {
         if (!TIPPED_ENABLED.get() || state.getValue(TIPPED)) return false;
-        if (fluid.is(BuiltInSoftFluids.POTION) && PotionBottleType.get(fluid) == PotionBottleType.LINGERING) {
-            var content = getPotion(fluid);
-                return tryAddingPotion(state, world, pos, content, null);
-        }
         return false;
     }
 

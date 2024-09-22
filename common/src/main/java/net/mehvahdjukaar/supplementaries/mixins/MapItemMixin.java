@@ -64,16 +64,6 @@ public abstract class MapItemMixin {
                                 @Share("customColorMap") LocalRef<Map<Vector2i, Pair<BlockPos, Multiset<Block>>>> colorMap,
                                 @Share("customLightMap") LocalRef<Map<Vector2i, List<Vector2i>>> lightMap,
                                 @Share("heightLock") LocalIntRef height) {
-        int mapHeight = EmptySliceMapItem.getMapHeight(data);
-        height.set(mapHeight);
-        colorMap.set(CommonConfigs.Tweaks.TINTED_MAP.get() ? new HashMap<>() : null);
-        lightMap.set(MapLightHandler.isActive() ? new HashMap<>() : null);
-        if (mapHeight != Integer.MAX_VALUE) {
-            if (!EmptySliceMapItem.canPlayerSee(mapHeight, viewer)) {
-                ci.cancel();
-            }
-            range.set((int) (range.get() * EmptySliceMapItem.getRangeMultiplier()));
-        }
     }
 
 
@@ -103,7 +93,6 @@ public abstract class MapItemMixin {
                                                   @Share("heightLock") LocalIntRef height) {
         MapColor cutoffColor = null;
         if ((height.get() != Integer.MAX_VALUE && height.get() <= w)) {
-            cutoffColor = EmptySliceMapItem.getCutoffColor(pos, chunk);
         }
 
         if (lightMap.get() != null) {

@@ -26,16 +26,6 @@ public abstract class LevelRendererMixin {
     @Final
     private Minecraft minecraft;
 
-    @Inject(
-            method = "renderLevel",
-            at = @At(value = "FIELD",
-                    target = "Lnet/minecraft/client/Minecraft;hitResult:Lnet/minecraft/world/phys/HitResult;",
-                    ordinal = 1
-            )
-    )
-    private void supplementaries$renderSlingshotOutline(PoseStack matrixStack, float partialTicks, long finishNanoTime, boolean blockOutlines, Camera camera, GameRenderer renderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
-        if (blockOutlines) SlingshotRendererHelper.renderBlockOutline(matrixStack, camera, this.minecraft);
-    }
 
     @Inject(method = "notifyNearbyEntities", at = @At("HEAD"))
     private void setPartying(Level worldIn, BlockPos pos, boolean isPartying, CallbackInfo info) {

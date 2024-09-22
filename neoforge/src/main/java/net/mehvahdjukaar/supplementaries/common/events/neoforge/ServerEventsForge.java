@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.UsernameCache;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
@@ -45,7 +46,7 @@ import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 public class ServerEventsForge {
 
     public static void init() {
-        MinecraftForge.EVENT_BUS.register(ServerEventsForge.class);
+        NeoForge.EVENT_BUS.register(ServerEventsForge.class);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

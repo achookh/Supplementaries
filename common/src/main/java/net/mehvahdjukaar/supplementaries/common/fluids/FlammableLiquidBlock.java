@@ -215,7 +215,6 @@ public class FlammableLiquidBlock extends FiniteLiquidBlock implements ILightabl
                 } else {
                     entity.setRemainingFireTicks(entity.getRemainingFireTicks() + 1);
                     if (entity.getRemainingFireTicks() == 0) {
-                        entity.setSecondsOnFire(8);
                     }
                 }
             }

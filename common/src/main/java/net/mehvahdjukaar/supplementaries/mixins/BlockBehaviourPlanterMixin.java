@@ -26,25 +26,4 @@ public abstract class BlockBehaviourPlanterMixin {
     @Shadow
     public abstract boolean is(TagKey<Block> tagKey);
 
-    @ModifyReturnValue(method = "method_49227", at = @At(
-            value = "RETURN"))
-    @SuppressWarnings("ConstantConditions")
-    public Vec3 getOffset(Vec3 original, @Local(argsOnly = true) BlockGetter level, @Local(argsOnly = true) BlockPos pos) {
-        //null check for world since some mods like to throw a null world here...
-        // be sure you aren't checking other chunks
-        if (level != null && !original.equals(Vec3.ZERO)) {
-
-            if (level instanceof LevelReader l && (!l.isClientSide() || !l.hasChunkAt(pos.below(2)))) {
-                return original;
-            }
-            int b = 1;
-            if (this.getBlock() instanceof DoublePlantBlock && ((BlockBehaviour.BlockStateBase) (Object) this).getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.UPPER) {
-                b = 2;
-            }
-            if (level.getBlockState(pos.below(b)).is(ModTags.PREVENTS_OFFSET_ABOVE)) {
-                return Vec3.ZERO;
-            }
-        }
-        return original;
-    }
 }

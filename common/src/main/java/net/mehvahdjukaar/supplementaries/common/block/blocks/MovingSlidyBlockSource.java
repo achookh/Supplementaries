@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.supplementaries.common.block.blocks;
 
+import com.mojang.serialization.MapCodec;
 import net.mehvahdjukaar.supplementaries.reg.ModRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
@@ -17,6 +18,11 @@ public class MovingSlidyBlockSource extends DirectionalBlock {
 
     public MovingSlidyBlockSource(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends DirectionalBlock> codec() {
+        return null;
     }
 
     @Override

@@ -110,10 +110,6 @@ public class DispenserBehaviorsManager {
         //bomb
         if (CommonConfigs.Tools.BOMB_ENABLED.get()) {
             //default behaviors for modded items
-            var bombBehavior = new BombsBehavior();
-            event.register(ModRegistry.BOMB_ITEM.get(), bombBehavior);
-            event.register(ModRegistry.BOMB_BLUE_ITEM.get(), bombBehavior);
-            event.register(ModRegistry.BOMB_SPIKY_ITEM.get(), bombBehavior);
         }
         //gunpowder
         if (CommonConfigs.Tweaks.PLACEABLE_GUNPOWDER.get()) {
@@ -121,20 +117,6 @@ public class DispenserBehaviorsManager {
         }
         if (CommonConfigs.Tools.ROPE_ARROW_ENABLED.get()) {
 
-            event.register(ModRegistry.ROPE_ARROW_ITEM.get(), new AbstractProjectileDispenseBehavior() {
-                private Projectile getProjectile(Level world, Position pos, ItemStack stack) {
-                    CompoundTag com = stack.getTag();
-                    int charges = stack.getMaxDamage();
-                    if (com != null) {
-                        if (com.contains("Damage")) {
-                            charges = charges - com.getInt("Damage");
-                        }
-                    }
-                    RopeArrowEntity arrow = new RopeArrowEntity(world, pos.x(), pos.y(), pos.z(), charges);
-                    arrow.pickup = AbstractArrow.Pickup.ALLOWED;
-                    return arrow;
-                }
-            });
         }
 
         boolean axe = CommonConfigs.Tweaks.AXE_DISPENSER_BEHAVIORS.get();
@@ -153,9 +135,6 @@ public class DispenserBehaviorsManager {
                     }
                     if (key && i instanceof KeyItem) {
                         event.register(new KeyBehavior(i));
-                    }
-                    if (slimeball && SuppPlatformStuff.isSlimeball(i)) {
-                        event.register(new ThrowableSlimeballBehavior(i));
                     }
                 } catch (Exception e) {
                     Supplementaries.LOGGER.warn("Error white registering dispenser behavior for item {}: {}", i, e);

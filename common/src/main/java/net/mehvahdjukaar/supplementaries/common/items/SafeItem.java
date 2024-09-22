@@ -40,15 +40,4 @@ public class SafeItem extends BlockItem {
         return ItemsUtil.tryInteractingWithContainerItem(stack, slot.getItem(), slot, action, player, false);
     }
 
-    @Override
-    @SuppressWarnings("ConstantConditions")
-    public Optional<TooltipComponent> getTooltipImage(ItemStack pStack) {
-        if (CompatHandler.QUARK && QuarkClientCompat.canRenderBlackboardTooltip()) {
-            CompoundTag cmp = pStack.getTagElement("BlockEntityTag");
-            if (cmp != null && !cmp.contains("LootTable")) {
-                return Optional.of(new InventoryTooltip(cmp, this, 27));
-            }
-        }
-        return Optional.empty();
-    }
 }

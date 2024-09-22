@@ -715,16 +715,10 @@ public class ModCreativeTabs {
         if (CommonConfigs.Functional.BAMBOO_SPIKES_ENABLED.get()) {
             items.add(ModRegistry.BAMBOO_SPIKES.get().asItem().getDefaultInstance());
             if (CommonConfigs.Functional.TIPPED_SPIKES_ENABLED.get() && CommonConfigs.Functional.TIPPED_SPIKES_TAB.get()) {
-                items.add(BambooSpikesTippedItem.makeSpikeItem(Potions.POISON));
-                items.add(BambooSpikesTippedItem.makeSpikeItem(Potions.LONG_POISON));
-                items.add(BambooSpikesTippedItem.makeSpikeItem(Potions.STRONG_POISON));
                 for (var potion : BuiltInRegistries.POTION.holders().toList()) {
                     var p = potion.value();
                     if (p == Potions.POISON || p == Potions.LONG_POISON || p == Potions.STRONG_POISON)
                         continue;
-                    if (BambooSpikesTippedItem.isPotionValid(potion)) {
-                        items.add(BambooSpikesTippedItem.makeSpikeItem(potion));
-                    }
                 }
             }
         }

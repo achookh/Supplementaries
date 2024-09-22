@@ -200,10 +200,10 @@ public class BlackboardBlock extends WaterBlock implements EntityBlock, IWashabl
                 if (player instanceof ServerPlayer serverPlayer) {
                     te.tryOpeningEditGui(serverPlayer, pos, stack);
                 }
-                return InteractionResult.CONSUME;
+                return ItemInteractionResult.CONSUME;
             }
         }
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.SUCCESS;
     }
 
     public enum UseMode {

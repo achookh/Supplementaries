@@ -67,9 +67,6 @@ public class FirePitBlock extends LightUpWaterBlock {
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (state.getValue(LIT) && entity instanceof LivingEntity && !EnchantmentHelper.hasFrostWalker((LivingEntity) entity)) {
-            entity.hurt(level.damageSources().inFire(), this.fireDamage);
-        }
 
         super.entityInside(state, level, pos, entity);
     }

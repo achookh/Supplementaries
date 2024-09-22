@@ -22,16 +22,4 @@ public abstract class PlayerProjectileMixin extends LivingEntity {
         super(entityType, level);
     }
 
-    @Inject(locals = LocalCapture.CAPTURE_FAILHARD, method = "getProjectile",
-            at = @At(value = "INVOKE_ASSIGN", target =  "Ljava/util/function/Predicate;test(Ljava/lang/Object;)Z",
-                    shift = At.Shift.BEFORE),
-            cancellable = true
-    )
-    private void getProjectile(ItemStack weaponStack, CallbackInfoReturnable<ItemStack> cir,
-                               Predicate<ItemStack> supporterArrows, int slotIndex, ItemStack itemStack) {
-        if (itemStack.getItem() instanceof QuiverItem && !CommonConfigs.Tools.QUIVER_CURIO_ONLY.get()) {
-            ItemStack arrow = QuiverItem.getQuiverData(itemStack).getSelected(supporterArrows);
-            if (arrow != ItemStack.EMPTY) cir.setReturnValue(arrow);
-        }
-    }
 }

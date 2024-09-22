@@ -83,9 +83,6 @@ public class ModSetup {
     }
 
     private static void registerMobFoods() {
-        RegHelper.registerChickenFood(ModRegistry.FLAX_SEEDS_ITEM.get());
-        RegHelper.registerHorseFood(ModRegistry.FLAX_BLOCK.get(), ModRegistry.SUGAR_CUBE.get(), ModRegistry.FLAX_ITEM.get());
-        RegHelper.registerParrotFood(ModRegistry.FLAX_SEEDS_ITEM.get());
     }
 
     private static void registerFrameBlocks() {

@@ -53,11 +53,6 @@ public class BubbleBlowerItem extends Item implements IThirdPersonAnimationProvi
 
         if (charges > 0) {
 
-            int ench = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.STASIS_ENCHANTMENT.get(), itemstack);
-            if (ench > 0) {
-                return this.deployBubbleBlock(itemstack, level, player, hand);
-            }
-
             player.startUsingItem(hand);
 
             return InteractionResultHolder.consume(itemstack);
@@ -162,13 +157,6 @@ public class BubbleBlowerItem extends Item implements IThirdPersonAnimationProvi
         return false;
     }
 
-    @ForgeOverride
-    public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-        ListTag enchantments = EnchantedBookItem.getEnchantments(book);
-        return enchantments.size() == 1 &&
-                EnchantmentHelper.getEnchantmentId(enchantments.getCompound(0)).equals(
-                        EnchantmentHelper.getEnchantmentId(ModRegistry.STASIS_ENCHANTMENT.get()));
-    }
 
     @SuppressWarnings("UnsafePlatformOnlyCall")
     @Override

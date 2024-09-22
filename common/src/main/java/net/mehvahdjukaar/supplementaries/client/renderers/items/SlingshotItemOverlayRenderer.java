@@ -26,9 +26,6 @@ public class SlingshotItemOverlayRenderer extends ProjectileWeaponOverlayRendere
                     renderAmmo(graphics, x, y, ammo);
                 }
                 if (outline) {
-                    if (EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.STASIS_ENCHANTMENT.get(), stack) != 0) {
-                        SlingshotRendererHelper.grabNewLookPos(player);
-                    }
                 }
             }
             return true;

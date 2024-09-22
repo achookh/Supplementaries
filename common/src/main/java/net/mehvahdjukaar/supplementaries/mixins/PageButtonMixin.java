@@ -25,12 +25,4 @@ public abstract class PageButtonMixin implements IAntiquable {
         this.supplementaries$antiqueInk = hasInk;
     }
 
-    @ModifyArg(method = "renderWidget", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"))
-    ResourceLocation setTatteredBookTexture(ResourceLocation res) {
-        if(supplementaries$antiqueInk){
-           return ModTextures.TATTERED_BOOK_GUI_TEXTURE;
-        }
-        return res;
-    }
 }

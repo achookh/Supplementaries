@@ -42,19 +42,6 @@ public class RopeArrowEntity extends AbstractArrow {
         super(type, world);
     }
 
-    public RopeArrowEntity(Level worldIn, LivingEntity throwerIn, int charges) {
-        super(ModEntities.ROPE_ARROW.get(), throwerIn, worldIn);
-        this.charges = charges;
-    }
-
-    public RopeArrowEntity(Level worldIn, double x, double y, double z, int charges) {
-        super(ModEntities.ROPE_ARROW.get(), x, y, z, worldIn);
-        this.charges = charges;
-    }
-
-    public RopeArrowEntity(Level worldIn, double x, double y, double z) {
-        super(ModEntities.ROPE_ARROW.get(), x, y, z, worldIn);
-    }
 
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
@@ -75,7 +62,6 @@ public class RopeArrowEntity extends AbstractArrow {
         super.readAdditionalSaveData(compound);
         this.charges = compound.getInt("Ropes");
         if (compound.contains("PrevPlacedPos")) {
-            this.prevPlacedPos = NbtUtils.readBlockPos(compound.getCompound("PrevPlacedPos"));
         }
     }
 
@@ -87,6 +73,11 @@ public class RopeArrowEntity extends AbstractArrow {
             return stack;
         }
         return new ItemStack(Items.ARROW);
+    }
+
+    @Override
+    protected ItemStack getDefaultPickupItem() {
+        return ItemStack.EMPTY;
     }
 
     //TODO: add sound
@@ -208,7 +199,6 @@ public class RopeArrowEntity extends AbstractArrow {
         Entity entity = pResult.getEntity();
         int k = entity.getRemainingFireTicks();
         if (this.isOnFire() && entity.getType() != EntityType.ENDERMAN) {
-            entity.setSecondsOnFire(5);
         }
         entity.setRemainingFireTicks(k);
 

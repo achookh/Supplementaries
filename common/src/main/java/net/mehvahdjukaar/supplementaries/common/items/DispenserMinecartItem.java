@@ -61,9 +61,6 @@ public class DispenserMinecartItem extends Item {
             }
 
             AbstractMinecart abstractminecart = new DispenserMinecartEntity(level, d0, d1 + d3, d2);
-            if (pStack.hasCustomHoverName()) {
-                abstractminecart.setCustomName(pStack.getHoverName());
-            }
 
             level.addFreshEntity(abstractminecart);
             pStack.shrink(1);

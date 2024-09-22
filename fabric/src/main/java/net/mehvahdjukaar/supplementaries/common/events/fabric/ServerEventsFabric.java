@@ -84,7 +84,6 @@ public class ServerEventsFabric {
                     BlockState raked = ModRegistry.RAKED_GRAVEL.get().defaultBlockState();
                     if (raked.canSurvive(level, pos)) {
                         level.playSound(player, pos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
-                        stack.hurtAndBreak(1, player, (playerIn) -> playerIn.broadcastBreakEvent(hand));
                         level.setBlockAndUpdate(pos, RakedGravelBlock.getConnectedState(raked, level, pos, player.getDirection()));
                         return InteractionResult.sidedSuccess(level.isClientSide);
                     }

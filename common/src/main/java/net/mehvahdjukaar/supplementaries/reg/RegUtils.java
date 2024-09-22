@@ -80,7 +80,6 @@ public class RegUtils {
             event.register(Items.BLAZE_ROD, new SuppAdditionalPlacement(ModRegistry.BLAZE_ROD_BLOCK.get()));
         }
         if (CommonConfigs.Tweaks.PLACEABLE_GUNPOWDER.get()) {
-            event.register(Items.GUNPOWDER, new SuppAdditionalPlacement(ModRegistry.GUNPOWDER_BLOCK.get()));
         }
 
         if (CommonConfigs.Tools.LUNCH_BOX_PLACEABLE.get()) {
@@ -107,7 +106,7 @@ public class RegUtils {
     }
 
     public static <T extends Block> RegSupplier<T> regWithItem(String name, Supplier<T> blockFactory) {
-        return regWithItem(name, blockFactory);
+        return regWithItem(name, blockFactory, new Item.Properties());
     }
 
     public static <T extends Block> RegSupplier<T> regWithItem(String name, Supplier<T> blockFactory, Item.Properties properties) {

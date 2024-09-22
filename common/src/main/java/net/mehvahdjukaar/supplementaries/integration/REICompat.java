@@ -7,7 +7,6 @@ import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.forge.REIPluginClient;
 import me.shedaniel.rei.plugin.common.displays.DefaultTillingDisplay;
 import me.shedaniel.rei.plugin.common.displays.crafting.DefaultCraftingDisplay;
-import net.mehvahdjukaar.supplementaries.common.items.crafting.SpecialRecipeDisplays;
 import net.mehvahdjukaar.supplementaries.reg.ModRegistry;
 import net.minecraft.world.item.Items;
 
@@ -17,7 +16,6 @@ public class REICompat implements REIClientPlugin {
 
     @Override
     public void registerDisplays(DisplayRegistry registry) {
-        SpecialRecipeDisplays.registerCraftingRecipes(l -> l.forEach(r -> registry.add(DefaultCraftingDisplay.of(r))));
         registry.add(new DefaultTillingDisplay(EntryStack.of(VanillaEntryTypes.ITEM, Items.GRAVEL.getDefaultInstance()),
                 EntryStack.of(VanillaEntryTypes.ITEM, ModRegistry.RAKED_GRAVEL.get().asItem().getDefaultInstance())));
     }
