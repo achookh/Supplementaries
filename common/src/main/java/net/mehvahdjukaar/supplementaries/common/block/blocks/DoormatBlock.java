@@ -43,7 +43,7 @@ public class DoormatBlock extends WaterBlock implements EntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (level.getBlockEntity(pos) instanceof DoormatBlockTile tile && tile.isAccessibleBy(player)) {
+        if (level.getBlockEntity(pos) instanceof DoormatBlockTile tile ) {
 
             boolean sideHit = hitResult.getDirection() != Direction.UP;
             boolean canExtract = stack.isEmpty() && (player.isShiftKeyDown() || sideHit);

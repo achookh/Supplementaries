@@ -89,7 +89,6 @@ public class StatueBlock extends WaterBlock implements EntityBlock {
     @Override
     public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         if (worldIn.getBlockEntity(pos) instanceof StatueBlockTile tile) {
-            BlockUtil.addOptionalOwnership(placer, tile);
         }
     }
 

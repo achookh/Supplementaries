@@ -129,7 +129,7 @@ public class PedestalBlock extends WaterBlock implements EntityBlock, WorldlyCon
 
         ItemInteractionResult resultType = ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (state.getValue(ITEM_STATUS).hasTile() &&
-                level.getBlockEntity(pos) instanceof PedestalBlockTile tile && tile.isAccessibleBy(player)) {
+                level.getBlockEntity(pos) instanceof PedestalBlockTile tile ) {
 
             //Indiana Jones swap
             if (stack.getItem() instanceof SackItem) {

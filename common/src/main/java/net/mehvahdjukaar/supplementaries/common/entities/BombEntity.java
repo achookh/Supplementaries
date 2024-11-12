@@ -58,7 +58,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.function.Supplier;
 
-public class BombEntity extends ImprovedProjectileEntity implements IExtraClientSpawnData {
+public class BombEntity extends ImprovedProjectileEntity   {
 
     private final boolean hasFuse = CommonConfigs.Tools.BOMB_FUSE.get() != 0;
     private BombType type = BombType.NORMAL;
@@ -98,22 +98,6 @@ public class BombEntity extends ImprovedProjectileEntity implements IExtraClient
         this.active = compound.getBoolean("Active");
         this.type = BombType.values()[compound.getInt("Type")];
         this.changeTimer = compound.getInt("Timer");
-    }
-
-    //this is extra data needed when an entity creation packet is sent from server to client
-    @Override
-    public void readSpawnData(FriendlyByteBuf buffer) {
-        this.type = buffer.readEnum(BombType.class);
-    }
-
-    @Override
-    public void writeSpawnData(FriendlyByteBuf buffer) {
-        buffer.writeEnum(this.type);
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
-        return PlatHelper.getEntitySpawnPacket(this, serverEntity);
     }
 
     @Override

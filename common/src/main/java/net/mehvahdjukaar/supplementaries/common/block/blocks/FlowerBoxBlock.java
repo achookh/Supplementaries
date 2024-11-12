@@ -103,7 +103,7 @@ public class FlowerBoxBlock extends WaterBlock implements EntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (level.getBlockEntity(pos) instanceof FlowerBoxBlockTile tile && tile.isAccessibleBy(player)) {
+        if (level.getBlockEntity(pos) instanceof FlowerBoxBlockTile tile ) {
             int ind = getIndex(state, pos, hitResult);
             return tile.interactWithPlayerItem(player, hand, stack, ind);
         }

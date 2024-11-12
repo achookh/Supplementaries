@@ -50,7 +50,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public class SlingshotProjectileEntity extends ImprovedProjectileEntity implements IExtraClientSpawnData {
+public class SlingshotProjectileEntity extends ImprovedProjectileEntity   {
     private static final EntityDataAccessor<Byte> LOYALTY = SynchedEntityData.defineId(SlingshotProjectileEntity.class, EntityDataSerializers.BYTE);
     protected int MAX_AGE = 700;
 
@@ -106,11 +106,6 @@ public class SlingshotProjectileEntity extends ImprovedProjectileEntity implemen
         return var3 instanceof ServerLevel serverLevel
                 ? (byte)Mth.clamp(EnchantmentHelper.getTridentReturnToOwnerAcceleration(serverLevel, itemStack, this), 0, 127)
                 : 0;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
-        return PlatHelper.getEntitySpawnPacket(this, serverEntity);
     }
 
     @Override
@@ -391,33 +386,6 @@ public class SlingshotProjectileEntity extends ImprovedProjectileEntity implemen
         return this.isNoGravity() ? (float) (double) CommonConfigs.Tools.SLINGSHOT_DECELERATION.get() : super.getInertia();
     }
 
-    @Override
-    public void writeSpawnData(FriendlyByteBuf buffer) {
-        Entity entity = this.getOwner();
-        int id = -1;
-        if (entity != null) {
-            id = entity.getId();
-        }
-        buffer.writeInt(id);
-        buffer.writeFloat(this.xRotInc);
-        buffer.writeFloat(this.yRotInc);
-        buffer.writeFloat(this.getXRot());
-        buffer.writeFloat(this.getYRot());
-    }
-
-    @Override
-    public void readSpawnData(FriendlyByteBuf buffer) {
-        int id = buffer.readInt();
-        if (id != -1) {
-            this.setOwner(this.level().getEntity(id));
-        }
-        this.xRotInc = buffer.readFloat();
-        this.yRotInc = buffer.readFloat();
-        this.setXRot(buffer.readFloat());
-        this.setYRot(buffer.readFloat());
-        this.xRotO = this.getXRot();
-        this.yRotO = this.getYRot();
-    }
 
     public int getLightEmission() {
         return light.get();

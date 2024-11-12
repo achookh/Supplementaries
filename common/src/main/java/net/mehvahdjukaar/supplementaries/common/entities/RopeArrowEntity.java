@@ -44,11 +44,6 @@ public class RopeArrowEntity extends AbstractArrow {
 
 
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
-        return PlatHelper.getEntitySpawnPacket(this, serverEntity);
-    }
-
-    @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putInt("Ropes", this.charges);

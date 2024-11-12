@@ -78,7 +78,7 @@ public class JarBlock extends WaterBlock implements EntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (level.getBlockEntity(pos) instanceof JarBlockTile tile && tile.isAccessibleBy(player)) {
+        if (level.getBlockEntity(pos) instanceof JarBlockTile tile ) {
             // make te do the work
             if (tile.handleInteraction(player, hand, level, pos)) {
                 if (!level.isClientSide()) {
@@ -96,7 +96,6 @@ public class JarBlock extends WaterBlock implements EntityBlock {
     @Override
     public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         if (worldIn.getBlockEntity(pos) instanceof JarBlockTile tile) {
-            BlockUtil.addOptionalOwnership(placer, tile);
         }
     }
 

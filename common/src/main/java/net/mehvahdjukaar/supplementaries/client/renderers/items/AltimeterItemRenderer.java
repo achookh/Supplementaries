@@ -66,10 +66,6 @@ public class AltimeterItemRenderer extends ItemStackRenderer {
         int mult = ClientConfigs.Items.DEPTH_METER_STEP_MULT.get();
         int index = (int) Math.round(stripDepth * mult);
 
-        BakedModel model = pair.getSecond().computeIfAbsent(index, i ->
-                new AltimeterModel(index / (float) mult, textureH, sprite));
-        Minecraft.getInstance().getItemRenderer().render(Items.DIAMOND.getDefaultInstance(), transformType,
-                false, poseStack, buffer, packedLight, packedOverlay, model);
         poseStack.popPose();
     }
 
@@ -100,106 +96,4 @@ public class AltimeterItemRenderer extends ItemStackRenderer {
         }
     }
 
-    private static class AltimeterModel implements BakedModel {
-
-        private final List<BakedQuad> quads = new ArrayList<>();
-        private final ItemOverrides overrides;
-        private final ItemTransforms transforms;
-
-        AltimeterModel(float depth, int textureH, TextureAtlasSprite sprite) {
-            int h = 5;
-
-            float invDepth = textureH - depth - h;
-            float shrink = sprite.uvShrinkRatio();
-            BakedQuadBuilder builder = BakedQuadBuilder.create(sprite);
-            builder.setAutoDirection();
-            builder.setAutoBuild(quads::add);
-            PoseStack ps = new PoseStack();
-            float u0 = 0;
-            float u1 = 0.25f;
-            float u3 = 0.25f;
-            float u4 = 0.5f;
-            for (int j = 0; j < 2; j++) {
-                ps.translate(0, 0, 15 / 32f);
-                addScaledQuad(builder, ps, shrink,
-                        false,
-                        0.375f, 0.375f, 0.625f, 0.6875f,
-                        u0, invDepth / textureH, u1, (invDepth + h) / textureH);
-                addScaledQuad(builder, ps, shrink,
-                        true,
-                        0.375f, 0.6875f, 0.625f, 0.75f,
-                        u3, (invDepth - 1) / textureH, u4, invDepth / textureH);
-                ps.scale(-1, 1, -1);
-                ps.translate(-1, 0, -17 / 32f);
-                u0 = 0.25f;
-                u1 = 0;
-                u3 = 0.5f;
-                u4 = 0.25f;
-            }
-
-
-            BakedModel copy = ClientHelper.getModel(Minecraft.getInstance().getModelManager(), ClientRegistry.ALTIMETER_TEMPLATE);
-            this.quads.addAll(copy.getQuads(null, null, RandomSource.create()));
-            this.overrides = copy.getOverrides();
-            this.transforms = copy.getTransforms();
-        }
-
-        @Override
-        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction direction, RandomSource random) {
-            return direction == null ? quads : List.of();
-        }
-
-        @Override
-        public boolean useAmbientOcclusion() {
-            return false;
-        }
-
-        @Override
-        public boolean isGui3d() {
-            return false;
-        }
-
-        @Override
-        public boolean usesBlockLight() {
-            return false;
-        }
-
-        @Override
-        public boolean isCustomRenderer() {
-            return false;
-        }
-
-        @Override
-        public TextureAtlasSprite getParticleIcon() {
-            return null;
-        }
-
-        @Override
-        public ItemTransforms getTransforms() {
-            return transforms;
-        }
-
-        @Override
-        public ItemOverrides getOverrides() {
-            return overrides;
-        }
-
-
-        private static void addScaledQuad(BakedQuadBuilder builder, PoseStack ps,
-                                          float shrink,
-                                          boolean top,
-                                          float x0, float y0,
-                                          float x1, float y1,
-                                          float u0, float v0, float u1, float v1) {
-            float ix0 = shrink * (x0 - 0.5f) * 2;
-            float ix1 = shrink * (x1 - 0.5f) * 2;
-            float iy0 = top ? 0 : shrink * (y0 - 0.5f) * 2;
-            float iy1 = !top ? 0 : shrink * (y1 - 0.5f) * 2;
-            VertexUtil.addQuad(builder, ps,
-                    x0 + ix0, y0 + iy0, x1 + ix1, y1 + iy1,
-                    u0, v0, u1, v1,
-                    255, 255, 255, 255,
-                    0, 0);
-        }
-    }
 }

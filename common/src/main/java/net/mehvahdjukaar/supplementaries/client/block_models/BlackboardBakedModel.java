@@ -23,6 +23,7 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class BlackboardBakedModel implements CustomBakedModel {
 
@@ -134,17 +135,21 @@ public class BlackboardBakedModel implements CustomBakedModel {
         float u1 = 1 - (x + width);
         float v1 = 1 - (y + height);
 
-        BakedQuadBuilder builder = BakedQuadBuilder.create(sprite, transform);
+        AtomicReference<BakedQuad> quad = new AtomicReference<>();
+        try(var builder = BakedQuadBuilder.create(sprite, quad::set)) {
 
-        builder.setAutoDirection();
+            builder.setAutoDirection();
 
-        putVertex(builder, x + width, y + height, u1, v1, color);
-        putVertex(builder, x + width, y, u1, v0, color);
-        putVertex(builder, x, y, u0, v0, color);
-        putVertex(builder, x, y + height, u0, v1, color);
+            putVertex(builder, x + width, y + height, u1, v1, color);
+            putVertex(builder, x + width, y, u1, v0, color);
+            putVertex(builder, x, y, u0, v0, color);
+            putVertex(builder, x, y + height, u0, v1, color);
 
-        if (emissive) builder.lightEmission(15);
-        return builder.getQuad();
+            if (emissive) builder.lightEmission(15);
+            return quad.get();
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
 

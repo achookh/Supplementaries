@@ -36,7 +36,6 @@ public class MapMarkerCommand {
             ItemStack stack = p.getMainHandItem();
             var data = MapHelper.getMapData(stack, level, p);
             if (data != null) {
-                MapHelper.addDecorationToMap(stack, p.getOnPos(), decoration, 0);
             }
         }
         return 0;
